@@ -121,7 +121,7 @@
 <script src="../Javascripts/global.js"></script>
 <!-- Carga dinámica de componentes compartidos (header y footer) -->
 <script>
-  fetch('../Components/header_panel_control.html')
+  fetch('../components/header_panel_control.html')
           .then((res) => res.text())
           .then((html) => {
             document.getElementById('topnav').innerHTML = html;
@@ -129,7 +129,7 @@
             renderUser();
           });
 
-  fetch('../Components/footer.html')
+  fetch('../components/footer.html')
           .then((res) => res.text())
           .then((html) => {
             document.getElementById('footer').innerHTML = html;
