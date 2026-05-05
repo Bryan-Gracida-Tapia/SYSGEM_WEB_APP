@@ -133,6 +133,7 @@ function toggleAddSection(show) {
     const section = document.getElementById("add-section");
     if (!section) return;
 
+    section.hidden = !show;
     section.style.display = show ? "block" : "none";
 }
 /**
@@ -149,8 +150,8 @@ async function loadComuneros() {
 
     const data = await fetchComunerosDashboard();
 
-    state.comuneros = data.comuneros;
-    state.filtered = [...data.comuneros];
+    state.comuneros = data.comuneros || [];
+    state.filtered = [...state.comuneros];
 
     renderComunerosList(state.filtered);
     renderSummary(data.estadisticas);
@@ -167,7 +168,15 @@ async function fetchComunerosDashboard() {
     for (const endpoint of ENDPOINTS.dashboardCandidates) {
         try {
             const res = await dbApiFetch(endpoint);
+
+            //validar errores del backend
+            if (!res.ok) {
+                throw new Error(`Error HTTP ${res.status}`);
+            }
+
             const json = await safeJson(res);
+
+            console.log("Respuesta backend:", json);
 
             return normalizeDashboardPayload(json);
 
@@ -212,6 +221,8 @@ function normalizeComunero(item = {}) {
     return {
         id: item.id ?? item._id ?? "",
         nombre: item.nombre || item.nombreCompleto || "Sin nombre",
+        nombreCompleto: item.nombreCompleto || item.nombre || "",
+
         estado: normalizeStatus(item.estado),
         inicio: item.fechaInicio || item.createdAt,
         correo: item.correo || item.email || ""
@@ -258,14 +269,21 @@ function renderComunerosList(lista) {
         return;
     }
 
-    message.textContent = `✅ ${lista.length} comuneros cargados`;
+    message.textContent = `${lista.length} comuneros cargados`;
 
     lista.forEach(c => {
+        const isActivo = c.estado === "activo";
+        const isInactivo = c.estado === "inactivo";
+        const isBaja = c.estado === "baja";
         const estadoTexto = c.estado === "activo" ? "Activo" : "Inactivo";
         const estadoClase = c.estado === "activo" ? "activo" : "inactivo";
 
         const item = document.createElement("div");
-        item.className = "card__item";
+        const estadoVisual =
+            c.estado === "inactivo" ? "card--inactive" :
+                c.estado === "baja" ? "card--baja" : "";
+
+        item.className = `card__item ${estadoVisual}`;
 
         item.innerHTML = `
             <div class="card__avatar">
@@ -280,29 +298,37 @@ function renderComunerosList(lista) {
             </div>
 
             <div class="card__actions">
-                <button class="card__btn card__btn--success"
-                    data-action="activate"
-                    data-id="${c.id}">
-                    Activar
-                </button>
-
-                <button class="card__btn card__btn--warning"
-                    data-action="deactivate"
-                    data-id="${c.id}">
-                    Desactivar
-                </button>
-
+                ${isInactivo ? `
+                    <button class="card__btn card__btn--success"
+                        data-action="activate"
+                        data-id="${c.id}">
+                        Activar
+                    </button>
+                ` : ""}
+            
+                ${isActivo ? `
+                    <button class="card__btn card__btn--warning"
+                        data-action="deactivate"
+                        data-id="${c.id}">
+                        Desactivar
+                    </button>
+                ` : ""}
+            
                 <button class="card__btn card__btn--edit"
                     data-action="edit"
-                    data-id="${c.id}">
+                    data-id="${c.id}"
+                    ${c.estado === "inactivo" ? "disabled title='No se puede editar (inactivo)'" : ""}>
                     Editar
                 </button>
-
-                <button class="card__btn card__btn--danger"
-                    data-action="remove"
-                    data-id="${c.id}">
-                    Dar de baja
-                </button>
+            
+                ${!isBaja ? `
+                    <button class="card__btn card__btn--danger"
+                        data-action="remove"
+                        data-id="${c.id}">
+                        Dar de baja
+                    </button>
+                ` : ""}
+            
             </div>
         `;
 
@@ -315,6 +341,9 @@ function renderComunerosList(lista) {
  */
 function renderSummary(stats) {
     setText("summary-total", stats.total);
+    setText("summary-activos", stats.activos);
+    setText("summary-inactivos", stats.inactivos);
+    setText("summary-baja", stats.baja);
 }
 
 /**
@@ -347,27 +376,44 @@ async function handleListAction(e) {
     if (!id || !action) return;
 
     try {
+        // ACTIVAR
+        if (action === "activate") {
+            await cambiarEstado(id, "activo");
+            setStatusMessage(" Comunero activado");
+        }
+
+        // DESACTIVAR
+        if (action === "deactivate") {
+            await cambiarEstado(id, "inactivo");
+            setStatusMessage(" Comunero desactivado");
+        }
+        // Eliminar
         if (action === "remove") {
             const confirmDelete = confirm("¿Seguro que quieres eliminar este comunero?");
             if (!confirmDelete) return;
 
             await darDeBaja(id);
-            setStatusMessage("🗑️ Comunero eliminado");
+            setStatusMessage(" Comunero eliminado");
         }
-
+        // EDITAR
         if (action === "edit") {
             const c = state.comuneros.find(x => x.id == id);
 
             if (!c) {
-                setStatusMessage("❌ Comunero no encontrado");
+                setStatusMessage("Comunero no encontrado");
+                return;
+            }
+            if (c.estado === "inactivo") {
+                setStatusMessage("⚠No se puede editar un comunero inactivo");
                 return;
             }
 
             startEditMode(c);
-            return; // 🔥 evitar recarga innecesaria
+            toggleAddSection(true);
+            return;
         }
 
-        // 🔥 Solo recargar si hubo cambio real
+        // Solo recargar si hubo cambio real
         await loadComuneros();
 
     } catch (err) {
@@ -375,7 +421,21 @@ async function handleListAction(e) {
         setStatusMessage(`❌ ${err.message}`);
     }
 }
+/**
+ * Cambiar estado del comunero
+ */
+async function cambiarEstado(id, estado) {
+    const res = await dbApiFetch(`/comuneros/${id}/estado`, {
+        method: "PATCH",
+        body: { estado }
+    });
 
+    const data = await safeJson(res);
+
+    if (!res.ok) {
+        throw new Error(data.error || "Error cambiando estado");
+    }
+}
 /**
  * Elimina comunero
  */
@@ -501,7 +561,7 @@ function startCreateMode() {
  */
 function startEditMode(c) {
     if (!c) {
-        setStatusMessage("❌ Comunero no encontrado");
+        setStatusMessage(" Comunero no encontrado");
         return;
     }
 
@@ -511,8 +571,16 @@ function startEditMode(c) {
     setInputValue("full-name", c.nombreCompleto || c.nombre || "");
     setInputValue("email", c.correo || "");
 
-    // opcional: limpiar password en edición
-    setInputValue("password", "");
+    setInputValue("address", c.direccion || "");
+    setInputValue("birthdate", c.fechaNacimiento || "");
+
+    const civil = document.querySelector(
+        `input[name="civil_status"][value="${(c.estadoCivil || "").toLowerCase()}"]`
+    );
+
+    const tipo = document.querySelector(
+        `input[name="type"][value="type_${(c.tipo || "").toLowerCase()}"]`
+    );
 }
 
 /**
