@@ -342,6 +342,10 @@ div{
     border-color: #fed7aa;
     color: #b45309;
 }
+.card--inactive {
+    opacity: 0.5;
+    filter: grayscale(40%);
+}
 
 .card__btn--edit {
     background: #edf6ff;
@@ -353,6 +357,10 @@ div{
     background: #fff1f2;
     border-color: #fca5a5;
     color: var(--danger);
+}
+.card--baja {
+    opacity: 0.3;
+    filter: grayscale(80%);
 }
 /* ------------------------------
       Layout: gestión de cargos: formulario
