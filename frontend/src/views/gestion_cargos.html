@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- URL base para todas las llamadas del frontend hacia la API -->
   <script>
-    window.SYSGEM_API_BASE = window.SYSGEM_API_BASE || "http://localhost:3000/api/sysgem";
+    window.SYSGEM_API_BASE = window.SYSGEM_API_BASE || "http://localhost:3000/api";
   </script>
 </head>
 <body>
@@ -40,21 +40,39 @@
           <h3 class="card__title">Ruleta de asignación de cargos</h3>
           <p class="card__description">Selecciona un cargo para asignar</p>
           <div class="card__assign">
-            <label class="card__container" for="cargo-select">
+            <div class="card__container">
               <select class="card__container-select" id="cargo-select">
                 <option value="">-- Seleccionar cargo</option>
               </select>
-              <button class="card__button" id="asignar-btn" type="button">Asignar a comunero pendiente</button>
-            </label>
+              <div class="card__dates">
+                <div>
+                  <small>Fecha inicio</small>
+                  <input type="date" id="fecha-inicio" />
+                </div>
+                <div>
+                  <small>Fecha fin</small>
+                  <input type="date" id="fecha-fin" />
+                </div>
+              </div>
+              <button class="card__button" id="roulette-btn" type="button">
+                Girar rouleta
+              </button>
+            </div>
           </div>
           <div class="card__roulette">
-            <div class="card__roulette-container">
-              <i class="card__roulette-icon fa-solid fa-circle-notch fa-spin"></i>
+            <div class="card__roulette-container" id="roulette-container">
+              <p>Aquí aparecerán los elegibles</p>
             </div>
+          </div>
+          <div style="text-align:center; margin-top:10px;">
+            <strong id="resultado-roulette"></strong>
           </div>
           <div class="card__message">
             <span id="roulette-message">Selecciona un cargo y asigna.</span>
           </div>
+          <button class="card__button" id="asignar-btn" type="button">
+            Asignar a comunero
+          </button>
         </article>
 
         <!-- Datos globales del estado de cargos -->
@@ -116,8 +134,8 @@
 </div>
 
 <!-- Capa compartida de conexión/API + scripts de sesión y módulo -->
-<script src="../Javascripts/gestion_cargos.js"></script>
 <script src="../Javascripts/DB.js"></script>
+<script src="../Javascripts/gestion_cargos.js"></script>
 <script src="../Javascripts/global.js"></script>
 <!-- Carga dinámica de componentes compartidos (header y footer) -->
 <script>
