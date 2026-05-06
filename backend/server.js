@@ -12,8 +12,10 @@ app.use(express.json());
 
 // Rutas
 const comunerosRoutes = require("./src/comuneros/comuneros_routes");
+const asignacionesRoutes = require("./src/asignaciones_cargo/asignaciones_routes");
 
 app.use("/api/comuneros", comunerosRoutes);
+app.use("/api/asignaciones_cargo", asignacionesRoutes);
 
 // Test
 app.get("/", (req, res) => {
