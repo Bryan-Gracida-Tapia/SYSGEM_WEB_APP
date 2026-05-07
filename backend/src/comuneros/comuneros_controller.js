@@ -78,11 +78,19 @@ exports.createComunero = async (req, res) => {
 exports.updateComunero = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombreCompleto, direccion, correo } = req.body;
+
+        const {
+            nombreCompleto,
+            fechaNacimiento,
+            estadoCivil,
+            tipo,
+            direccion,
+            correo
+        } = req.body;
 
         await db.query(
-            "UPDATE comuneros SET nombre_completo = ?, direccion = ?, correo = ? WHERE id = ?",
-            [nombreCompleto, direccion, correo, id]
+            "UPDATE comuneros SET nombre_completo = ?, fecha_nacimiento = ?, estado_civil = ?, tipo = ?, direccion = ?, correo = ? WHERE id = ?",
+            [nombreCompleto, fechaNacimiento, estadoCivil, tipo, direccion, correo, id]
         );
 
         res.json({ success: true });
