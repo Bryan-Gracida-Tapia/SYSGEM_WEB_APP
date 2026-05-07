@@ -16,7 +16,48 @@ Aplicación web desarrollada con el objetivo de facilitar la gestión de datos d
 ---
 
 ## 📁 Estructura del proyecto
+```
+SYSGEM_WEB/
+│
+├── backend/
+|	│
+|	├── server.js        
+|	│
+|	└── src/
+|    		├── config/
+|    		│   └── db.js  
+|    		│
+|    		├── comuneros/
+|    		│   ├── comuneros.controller.js   
+|    		│   └── comuneros.routes.js     
+|
+├── frontend/
+|	│
+|	├── index.html 
+|	├── structure.html 
+|	│
+|	└── src/
+|    		├── public/
+|    		│   └── logo.png
+|    		│
+|    		├── components/
+|    		│   └── header_panel_de_control.html
+|    		│
+|    		├── Javascripts/
+|    		│   ├── DB.js   # (NUEVO)
+|    		│   └── gestion_cargos_comuneros.js
+|    		│   └── global.js
+|    		│
+|    		├── views/
+|    		│   ├── Gestion_cargos.html
+|    		│   └── Gestion_cargos_comuneros.html
+|    		│
+|    		├── styles/
+|    		│   ├── global.css
+|    		│   └── style.css
+└── README.md
 
+```
 ---
 
 ## Tecnologías utilizadas
