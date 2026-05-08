@@ -59,7 +59,6 @@ const dbApiFetch = (db && db.apiFetch)
  * ============================================================
  * 📌 ENDPOINTS (CON FALLBACK)
  * ============================================================
- * 🔥 NUEVO: ahora soporta múltiples rutas como comuneros
  */
 const ENDPOINTS = {
     dashboardCandidates: [], // (desactivado)
@@ -101,15 +100,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cargarCargosDesdeBD().catch((err) => {
         console.error(err);
-        setStatusMessage("❌ Error cargando cargos");
+        setStatusMessage("Error cargando cargos");
     });
 });
 
 /**
  * ============================================================
- * 📌 CARGAR CARGOS (CON FALLBACK)
+ * 📌 CARGAR CARGOS
  * ============================================================
- * 🔥 NUEVO: estilo comuneros
  */
 async function cargarCargosDesdeBD() {
     try {
@@ -147,7 +145,6 @@ function llenarSelectCargos(cargos) {
  * ============================================================
  * 📌 NORMALIZACIÓN DE CARGOS
  * ============================================================
- * 🔥 NUEVO: igual que comuneros
  */
 function normalizeCargos(payload) {
 
@@ -222,9 +219,8 @@ function sugerirFechas(cargo) {
 
 /**
  * ============================================================
- * 📌 CARGAR ELEGIBLES (CON FALLBACK)
+ * 📌 CARGAR ELEGIBLES
  * ============================================================
- * 🔥 NUEVO estilo comuneros
  */
 async function cargarElegibles(cargoId) {
 
@@ -245,7 +241,7 @@ async function cargarElegibles(cargoId) {
 
             renderRuleta();
 
-            setStatusMessage(`✅ ${state.elegibles.length} elegibles encontrados`);
+            setStatusMessage(`${state.elegibles.length} elegibles encontrados`);
             return;
 
         } catch (err) {
@@ -254,7 +250,7 @@ async function cargarElegibles(cargoId) {
     }
 
     console.error(lastError);
-    setStatusMessage("❌ Error cargando elegibles");
+    setStatusMessage("Error cargando elegibles");
 }
 
 /**
@@ -353,14 +349,14 @@ function attachAssignHandler() {
 
         } catch (err) {
             console.error(err);
-            setStatusMessage("❌ Error al asignar");
+            setStatusMessage("Error al asignar");
         }
     });
 }
 
 /**
  * ============================================================
- * 📌 API ASIGNAR (CON FALLBACK)
+ * 📌 API ASIGNAR
  * ============================================================
  */
 async function assignCargo(body) {
@@ -389,7 +385,7 @@ async function assignCargo(body) {
 
 /**
  * ============================================================
- * 📌 HELPERS (REUTILIZADOS)
+ * 📌 HELPERS
  * ============================================================
  */
 function setStatusMessage(msg) {

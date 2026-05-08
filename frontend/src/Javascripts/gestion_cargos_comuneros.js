@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bindUI();
     loadComuneros().catch((error) => {
         console.error(error);
-        setStatusMessage("❌ Error al cargar comuneros");
+        setStatusMessage("Error al cargar comuneros");
     });
 });
 
@@ -156,7 +156,7 @@ async function loadComuneros() {
     renderComunerosList(state.filtered);
     renderSummary(data.estadisticas);
 
-    setStatusMessage(`✅ ${state.comuneros.length} comuneros cargados`);
+    setStatusMessage(`${state.comuneros.length} comuneros cargados`);
 }
 
 /**
@@ -418,7 +418,7 @@ async function handleListAction(e) {
 
     } catch (err) {
         console.error(err);
-        setStatusMessage(`❌ ${err.message}`);
+        setStatusMessage(`${err.message}`);
     }
 }
 /**
