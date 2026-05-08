@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SYSGEM - Mi Perfil</title>
+    <link rel="stylesheet" href="../styles/style.css" />
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<div class="container">
+    <header class="topnav" id="topnav"></header>
+
+    <main class="dashboard__section--profile">
+
+        <section class="shortcuts">
+            <div class="card shortcut">
+                <div class="shortcut__icon"><i class="far fa-user"></i></div>
+                <span>Perfil</span>
+                <small class="card__subtitle">Ver y editar</small>
+            </div>
+            <div class="card shortcut">
+                <div class="shortcut__icon"><i class="far fa-calendar"></i></div>
+                <span>Calendario</span>
+                <small class="card__subtitle">Eventos</small>
+            </div>
+            <div class="card shortcut">
+                <div class="shortcut__icon"><i class="fas fa-briefcase"></i></div>
+                <span>Historial</span>
+                <small class="card__subtitle">Mis cargos</small>
+            </div>
+        </section>
+
+        <section class="profile">
+            <div class="profile__letf">
+                <div class="profile__icon">
+                    <i class="far fa-user"></i>
+                </div>
+                <div class="profile__info">
+                    <span class="profile__name" id="perf-usuario">Cargando...</span>
+                    <span class="profile__status" id="perf-status">En línea</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="information">
+            <div class="information__box">
+                <h3 class="card__title">Información Personal</h3>
+                <p class="card__description">Datos de registro</p>
+            </div>
+
+            <div class="card__stats card__stats--grid">
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-nombre">-</span>
+                    <span class="card__label">Nombre completo</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-fecha">-</span>
+                    <span class="card__label">Fecha de nacimiento</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-correo">-</span>
+                    <span class="card__label">Correo electrónico</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-cargo">Sin asignar</span>
+                    <span class="card__label">Cargo actual</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="information">
+            <div class="information__box">
+                <h3 class="card__title">Cargos Comunitarios</h3>
+                <p class="card__description">Resumen de cumplimiento</p>
+            </div>
+
+            <div class="card__stats card__stats--grid">
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="stats-cumplidos">0</span>
+                    <span class="card__label">Cumplidos</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="stats-faltantes">0</span>
+                    <span class="card__label">Faltantes</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="stats-actuales">0</span>
+                    <span class="card__label">En curso</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="stats-total">0</span>
+                    <span class="card__label">Total realizados</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="Service">
+            <div class="information__box">
+                <h3 class="card__title">Estado de Servicios</h3>
+                <p class="card__description">Últimas actividades</p>
+            </div>
+
+            <div class="card__stats card__stats--flex">
+                <div class="card__stats-container card__stats--profile">
+                    <div class="card__stats-view">
+                        <span class="card__value" id="view-siguiente">-</span>
+                        <span class="card__label">Próximo</span>
+                    </div>
+                    <span class="card__label">Asignación futura</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <div class="card__stats-view">
+                        <span class="card__value" id="view-curso">-</span>
+                        <span class="card__label">Vigente</span>
+                    </div>
+                    <span class="card__label">Cargo en curso</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <div class="card__stats-view">
+                        <span class="card__value" id="view-finalizado">-</span>
+                        <span class="card__label">Concluido</span>
+                    </div>
+                    <span class="card__label">Último registro</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" id="footer"></footer>
+</div>
+
+<script src="../Javascripts/DB.js"></script>
+<script src="../Javascripts/perfil.js"></script>
+
+<script>
+    // Carga de componentes (Header y Footer)
+    fetch('../components/header_profile.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('topnav').innerHTML = html;
+        });
+
+    fetch('../components/footer.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('footer').innerHTML = html;
+        });
+</script>
+</body>
+</html>
