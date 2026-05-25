@@ -12,64 +12,58 @@
 <div class="container">
     <header class="topnav" id="topnav"></header>
 
-    <section class="dashboard__section--news">
-        <article class="card">
-            <h2 class="card__title">Bienvenido</h2>
-            <p class="card__description">
-                Gestiona anuncios, revisa servicios y administra cargos de manera sencilla desde este panel.
-            </p>
-            <div class="action__news">
-                <button class="actions__button actions__button--create">
-                    <i class="fa-solid fa-plus"></i> Crear anuncio
-                </button>
-                <button class="actions__button actions__button--services">
-                    <i class="fa-solid fa-gear"></i> Servicios activos
-                </button>
-                <button class="actions__button actions__button--charges">
-                    <i class="fa-solid fa-check"></i> Cargos activos
-                </button>
-            </div>
-        </article>
-    </section>
-
-    <main class="dashboard" style="display: flex; flex-direction: row; gap: 20px; align-items: flex-start;">
-
-        <section class="dashboard__section" style="flex: 2;">
+    <main class="dashboard">
+        <section class="dashboard__section">
             <article class="card">
-                <div class="card__managetop--new">
-                    <h2 class="card__title">Panel de Edición</h2>
-                    <p class="card__description--gestion">
-                        Ingresa los datos y pulsa <strong>Publicar anuncio</strong> (o Guardar Cambios si estás editando).
-                    </p>
-
-                    <form class="form_new" id="form-add">
-                        <div class="form__flex">
-                            <div class="form__group">
-                                <label class="form__label" for="title">Título del anuncio *</label>
-                                <input class="form__input" type="text" id="title" required placeholder="Ej. Corte de Energía" />
-                            </div>
-                            <div class="form__group">
-                                <label class="form__label" for="description">Descripción *</label>
-                                <input class="form__input" type="text" id="description" required placeholder="Describe los detalles..." />
-                            </div>
-                            <div class="form__group">
-                                <label class="form__label" for="publication-date">Fecha de publicación *</label>
-                                <input class="form__input" type="date" id="publication-date" required />
-                            </div>
-                        </div>
-                        <div class="form__actions">
-                            <button type="button" class="form__button" id="btn-cancel-add">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="form__button form__button--primary">
-                                Publicar anuncio
-                            </button>
-                        </div>
-                    </form>
+                <h2 class="card__title">Bienvenido</h2>
+                <p class="card__description">
+                    Gestiona anuncios, revisa servicios y administra cargos de manera sencilla desde este panel.
+                </p>
+                <div class="action__news">
+                    <button class="actions__button actions__button--create">
+                        <i class="fa-solid fa-plus"></i> Crear anuncio
+                    </button>
+                    <button class="actions__button actions__button--services">
+                        <i class="fa-solid fa-gear"></i> Servicios activos
+                    </button>
+                    <button class="actions__button actions__button--charges">
+                        <i class="fa-solid fa-check"></i> Cargos activos
+                    </button>
                 </div>
             </article>
 
-            <article class="card" style="margin-top: 20px;">
+            <article class="card">
+                <h2 class="card__title">Panel de Edición</h2>
+                <p class="card__description--gestion">
+                    Ingresa los datos y pulsa <strong>Publicar anuncio</strong> (o Guardar Cambios si estás editando).
+                </p>
+
+                <form class="form_new" id="form-add">
+                    <div class="form__flex">
+                        <div class="form__group">
+                            <label class="form__label" for="title">Título del anuncio *</label>
+                            <input class="form__input" type="text" id="title" required placeholder="Ej. Corte de Energía" />
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="description">Descripción *</label>
+                            <input class="form__input" type="text" id="description" required placeholder="Describe los detalles..." />
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="publication-date">Fecha de publicación *</label>
+                            <input class="form__input" type="date" id="publication-date" required />
+                        </div>
+                    </div>
+                    <div class="form__actions">
+                        <button type="button" class="form__button" id="btn-cancel-add">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="form__button form__button--primary">
+                            Publicar anuncio
+                        </button>
+                    </div>
+                </form>
+            </article>
+            <article class="card" >
                 <h2 class="card__title">Anuncios Publicados</h2>
                 <p class="card__description">Lista completa de anuncios en la base de datos.</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
@@ -80,7 +74,7 @@
             </article>
         </section>
 
-        <aside class="dashboard__aside" style="flex: 1;">
+        <aside class="dashboard__aside" >
             <section class="card">
                 <h3 class="card__title">Cargos activos</h3>
                 <div class="card__action">
@@ -92,7 +86,7 @@
                             <span class="action-card__date">Activo desde <strong>2022</strong></span>
                         </div>
                     </div>
-                    <div class="action-card" style="margin-top: 15px;">
+                    <div class="action-card" >
                         <div class="action-card__avatar"><i class="fa-solid fa-user"></i></div>
                         <div class="action-card__info">
                             <span class="action-card__name">María Gómez</span>
@@ -105,40 +99,21 @@
         </aside>
     </main>
 
-    <footer class="footer" id="footer" style="margin-top: 40px;"></footer>
+    <footer class="footer" id="footer"></footer>
 </div>
 
 <script src="../Javascripts/anuncios.js"></script>
-
+<script src="../Javascripts/global.js"></script>
 <script>
 
     fetch('../components/header_panel_de_anuncios.html')
-        .then(res => res.text())
-        .then(html => {
+        .then((res) => res.text())
+        .then((html) => {
             document.getElementById('topnav').innerHTML = html;
+            initLogout();
+            renderUser();
+        });
 
-
-            const btnLogout = document.getElementById('btn-logout');
-            if (btnLogout) {
-                btnLogout.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    localStorage.clear();
-                    sessionStorage.clear();
-
-
-                    window.location.replace('login.html');
-                });
-            }
-        })
-        .catch(err => console.error("Error al cargar el header:", err));
-
-    fetch('../components/footer.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('footer').innerHTML = html;
-        })
-        .catch(err => console.error("Error al cargar el footer:", err));
 </script>
 </body>
 </html>
