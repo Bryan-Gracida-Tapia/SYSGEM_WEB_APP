@@ -1,25 +1,15 @@
-/**
- * Módulo de gestión de comuneros.
- * Depende de DB.js para centralizar conexión y autenticación HTTP.
- */
 "use strict";
 /**
- * Este bloque define cómo se realizan las peticiones HTTP.
- * Usa:
- * - window.SYSGEM_DB.apiFetch
- * - fetch nativo como fallback
- *
- * Incluye:
- * ✔ Timeout automático
- * ✔ Serialización JSON
- * ✔ Headers estándar
+ * ============================================================
+ * 📌 MÓDULO: Gestión de comuneros
+ * ============================================================
  */
 const db = window.SYSGEM_DB;
 
 /**
  * Función base para llamadas HTTP al backend.
  *
- * @param {string} endpoint - Ruta del endpoint (ej: /comuneros)
+ * @param {string} endpoint - Ruta del endpoint
  * @param {Object} options - Configuración fetch (method, body, headers)
  * @returns {Promise<Response>}
  */
@@ -55,9 +45,7 @@ const dbApiFetch = (db && db.apiFetch)
     };
 
 /**
- * ============================================================
- * 📌 ENDPOINTS
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ENDPOINTS
  * Define rutas posibles para compatibilidad con backend.
  */
 const ENDPOINTS = {
@@ -69,9 +57,7 @@ const ENDPOINTS = {
 };
 
 /**
- * ============================================================
- * 📌 ESTADO GLOBAL
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADO GLOBAL
  * Maneja los datos en memoria del frontend.
  */
 const state = {
@@ -82,23 +68,19 @@ const state = {
 };
 
 /**
- * ============================================================
- * 📌 INICIALIZACIÓN
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
  * Se ejecuta al cargar el DOM.
  */
 document.addEventListener("DOMContentLoaded", () => {
     bindUI();
     loadComuneros().catch((error) => {
         console.error(error);
-        setStatusMessage("❌ Error al cargar comuneros");
+        setStatusMessage("Error al cargar comuneros");
     });
 });
 
 /**
- * ============================================================
- * 📌 EVENTOS UI
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// EVENTOS UI
  * Asocia elementos HTML con eventos JS.
  */
 function bindUI() {
@@ -125,9 +107,7 @@ function bindUI() {
         ?.addEventListener("click", handleListAction);
 }
 /**
- * ============================
- * MOSTRAR / OCULTAR FORM
- * ============================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// MOSTRAR / OCULTAR FORM
  */
 function toggleAddSection(show) {
     const section = document.getElementById("add-section");
@@ -137,12 +117,7 @@ function toggleAddSection(show) {
     section.style.display = show ? "block" : "none";
 }
 /**
- * ============================================================
- * 📌 CARGA DE DATOS
- * ============================================================
- */
-
-/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGA DE DATOS
  * Carga todos los comuneros desde backend
  */
 async function loadComuneros() {
@@ -156,7 +131,7 @@ async function loadComuneros() {
     renderComunerosList(state.filtered);
     renderSummary(data.estadisticas);
 
-    setStatusMessage(`✅ ${state.comuneros.length} comuneros cargados`);
+    setStatusMessage(`${state.comuneros.length} comuneros cargados`);
 }
 
 /**
@@ -196,12 +171,7 @@ function safeJson(res) {
 }
 
 /**
- * ============================================================
- * 📌 NORMALIZACIÓN DE DATOS
- * ============================================================
- */
-
-/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// NORMALIZACIÓN DE DATOS
  * Unifica estructura de respuesta del backend
  */
 function normalizeDashboardPayload(payload) {
@@ -230,9 +200,7 @@ function normalizeComunero(item = {}) {
 }
 
 /**
- * ============================================================
- * 📌 ESTADÍSTICAS
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADÍSTICAS
  */
 function computeStats(comuneros) {
     const total = comuneros.length;
@@ -248,9 +216,9 @@ function computeStats(comuneros) {
 }
 
 
-// ===============================
-// Renderizar comuneros
-// ===============================
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Renderizar comuneros
+ */
 function renderComunerosList(lista) {
     const container = document.getElementById("comuneros-list");
     const message = document.getElementById("comuneros-message");
@@ -347,9 +315,7 @@ function renderSummary(stats) {
 }
 
 /**
- * ============================================================
- * 📌 FILTRO
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// FILTRO
  */
 function applyFilter() {
     const q = document.getElementById("search-comuneros")?.value.toLowerCase() || "";
@@ -362,9 +328,7 @@ function applyFilter() {
 }
 
 /**
- * ============================
- * ACCIONES (CRUD)
- * ============================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ACCIONES (CRUD)
  */
 async function handleListAction(e) {
     const btn = e.target.closest("button");
@@ -418,7 +382,7 @@ async function handleListAction(e) {
 
     } catch (err) {
         console.error(err);
-        setStatusMessage(`❌ ${err.message}`);
+        setStatusMessage(`${err.message}`);
     }
 }
 /**
@@ -451,11 +415,7 @@ async function darDeBaja(id) {
 }
 
 /**
- * ============================================================
- * 📌 FORMULARIO
- * ============================================================
- */
-/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// FORMULARIO
  * Maneja envío de formulario
  */
 async function submitComunero(e) {
@@ -548,9 +508,7 @@ async function updateComunero(id, payload) {
 }
 
 /**
- * ============================================================
- * 📌 ESTADO FORMULARIO
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADO FORMULARIO
  */
 function startCreateMode() {
     state.editingId = null;
@@ -592,9 +550,7 @@ function resetFormState() {
 }
 
 /**
- * ============================================================
- * 📌 HELPERS
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// HELPERS
  */
 async function safeError(res) {
     try {

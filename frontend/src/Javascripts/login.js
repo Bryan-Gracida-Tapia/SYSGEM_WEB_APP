@@ -1,5 +1,14 @@
 "use strict";
+/**
+ * ============================================================
+ * 📌 MÓDULO: Login
+ * ============================================================
+ */
 
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
+ * Se ejecuta al cargar el DOM.
+ */
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form");
 
@@ -33,18 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } catch (err) {
 
-                let mensajeLimpio = "Error de conexión";
+                let mensaje = "Error de conexión";
 
                 try {
                     const jsonParte = err.message.substring(err.message.indexOf('{'));
                     const errorData = JSON.parse(jsonParte);
-                    mensajeLimpio = errorData.message;
+                    mensaje= errorData.message;
                 } catch (parseError) {
 
-                    mensajeLimpio = err.message;
+                    mensaje = err.message;
                 }
 
-                alert("Atención: " + mensajeLimpio);
+                alert("Atención: " + mensaje);
             }
         });
     }

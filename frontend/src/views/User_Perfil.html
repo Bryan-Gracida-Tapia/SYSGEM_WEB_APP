@@ -133,7 +133,7 @@
 
 <script src="../Javascripts/DB.js"></script>
 <script src="../Javascripts/perfil.js"></script>
-
+<script src="../Javascripts/global.js"></script>
 <script>
     // Carga de componentes (Header y Footer)
     fetch('../components/header_profile.html')
@@ -142,11 +142,6 @@
             document.getElementById('topnav').innerHTML = html;
         });
 
-    fetch('../components/footer.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('footer').innerHTML = html;
-        });
 </script>
 </body>
 </html>

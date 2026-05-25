@@ -1,21 +1,32 @@
+/**
+ * ============================================================
+ * 📌 MÓDULO: Gestión de anuncios
+ * ============================================================
+ */
+
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
+ * Se ejecuta al cargar el DOM.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const formAdd = document.getElementById('form-add');
     const btnCancelar = document.getElementById('btn-cancel-add');
     let editandoId = null;
 
+    // Limpiar el formulario
     const limpiarFormulario = () => {
         editandoId = null;
         formAdd.reset();
         const btnEnviar = formAdd.querySelector('.form__button--primary');
         btnEnviar.innerHTML = 'Publicar anuncio';
-        btnEnviar.style.backgroundColor = ""; // Vuelve al color original
+        btnEnviar.style.backgroundColor = "";
     };
 
     if (btnCancelar) {
         btnCancelar.addEventListener('click', limpiarFormulario);
     }
 
-
+    // Obtener los anuncios desde backend
     const cargarAnuncios = async () => {
         try {
             const res = await fetch('http://localhost:3000/api/anuncios');
@@ -46,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error(error); }
     };
 
-    // --- EDITAR (Prepara el form) ---
+    // Editar anuncio
     window.prepararEdicion = (anuncio) => {
         editandoId = anuncio.id_anuncio;
         document.getElementById('title').value = anuncio.nombre;
@@ -60,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // --- SUBMIT (Crear o Actualizar) ---
+    // Enviar formulario
     formAdd.onsubmit = async (e) => {
         e.preventDefault();
         const datos = {
@@ -85,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- ELIMINAR ---
+    // Eliminar
     window.eliminarAnuncio = async (id) => {
         if (!confirm("¿Eliminar anuncio?")) return;
         const res = await fetch(`http://localhost:3000/api/anuncios/${id}`, { method: 'DELETE' });
@@ -94,19 +105,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cargarAnuncios();
 
-
-
-    const detectarBotonLogout = setInterval(() => {
-        const btnLogout = document.getElementById('btn-logout');
-
-        if (btnLogout) {
-            clearInterval(detectarBotonLogout);
-
-            btnLogout.addEventListener('click', () => {
-                console.log("Cerrando sesión...");
-                localStorage.clear();
-                window.location.href = 'login.html';
-            });
-        }
-    }, 500); // Revisa cada 500ms
 });
