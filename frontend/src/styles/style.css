@@ -2,12 +2,6 @@
 /* ------------------------------
       Layout: gestión de cargos: Comuneros Activos
       ------------------------------ */
-.dashboard{
-    display: grid;
-    grid-template-columns:1fr 360px;
-    gap:1rem;
-    align-items: start;
-}
 
 main{
     unicode-bidi: isolate;
@@ -527,6 +521,8 @@ div{
 /* ////////////////////////////////////////////////////////////////////////////////////////////////// Gestión de anuncios
  */
 .dashboard__section--news{
+    display: flex;
+    flex-direction: column;
     margin-bottom: 0.8rem;
     gap: 20px;
     align-items: flex-start;
@@ -688,8 +684,9 @@ div{
     gap: 0.75rem;
 }
 .brand__logo{
-    width: 3.25rem;
-    height: 3.25rem;
+    width: auto;
+    height:auto;
+    max-width:2rem;
     display: flex;
     align-items: center;
     justify-content: center;

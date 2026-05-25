@@ -14,7 +14,7 @@
     --shadow-subtle: 0 6px 18px rgba(9,30,66,0.06);
     --shadow: 0 8px 20px rgba(16,24,40,0.06);
     --gap: 1rem;
-    --container-w: 1100px;
+    --container-w: 100%;
     --max-width-desktop: 420px;
     --input-height: 3.2rem;
     font-size: 16px;
@@ -34,12 +34,14 @@ body{
     display:flex;
     justify-content:center;
 }
-.dashboard{
-    display:grid;
-    gap: 18px;
-    align-items: center;
-    width:100%;
-    max-width:var(--container-w);
+.dashboard {
+    display: grid;
+    gap: 20px;
+    align-items: start;
+    width: 100%;
+    max-width: var(--container-w);
+
+    grid-template-columns: 2fr 1fr;
 }
 /* ////////////////////////////////////////////////////////////////////////////////////////////////// Top Navigation */
 .topnav{
