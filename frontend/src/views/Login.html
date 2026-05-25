@@ -14,7 +14,7 @@
         <main class="card card--login" aria-live="polite">
 
             <div class="brand" aria-hidden="false">
-                <div class="logo" aria-hidden="true">
+                <div class="brand__logo" aria-hidden="true">
                     <img src="../../public/assets/logo.png" style="width: auto; height:auto; max-width:2rem">
                 </div>
                 <div>
@@ -39,7 +39,7 @@
                 </div>
 
 
-                <div class="field" style="margin-top:0.25rem;">
+                <div class="field" >
                     <span class="icon-left" aria-hidden="true">
                         <i class="fa-solid fa-lock"></i>
                     </span>
@@ -52,7 +52,7 @@
                 </div>
 
 
-                <div class="row" style="margin-top:0.25rem;">
+                <div class="row" >
                     <label class="checkbox">
                         <input id="remember" type="checkbox" />
                         <span>Recordarme</span>
@@ -71,10 +71,6 @@
     </div>
     <script src="../Javascripts/DB.js"></script>
     <script src="../Javascripts/login.js"></script>
+    <script src="../Javascripts/global.js"></script>
 </body>
 </html>
-<script>
-    fetch('../components/footer.html').then(res => res.text()).then(html => {
-        document.getElementById('footer').innerHTML = html;
-    });
-</script>
