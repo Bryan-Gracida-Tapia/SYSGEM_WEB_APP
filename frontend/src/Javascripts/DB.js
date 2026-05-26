@@ -1,5 +1,9 @@
 "use strict";
-
+/**
+ * ============================================================
+ * 📌 Data Base
+ * ============================================================
+ */
 window.SYSGEM_DB = {
     async apiFetch(endpoint, options = {}) {
 
@@ -12,7 +16,7 @@ window.SYSGEM_DB = {
             ...options
         };
 
-        // Serializar body automáticamente
+        // Serializar body
         if (config.body && typeof config.body !== "string") {
             config.body = JSON.stringify(config.body);
         }

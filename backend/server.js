@@ -23,12 +23,12 @@ app.use("/api/perfil", require("./src/perfil/perfil_routes"));
 app.use("/api/anuncios", require("./src/anuncios/anuncios_routes"));
 // Test
 app.get("/", (req, res) => {
-    res.send("API funcionando 🚀");
+    res.send("API funcionando ");
 });
 
 // Servidor
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor en http://localhost:${PORT}`);
+    console.log(` Servidor en http://localhost:${PORT}`);
 });

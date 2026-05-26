@@ -1,27 +1,17 @@
 "use strict";
 /**
  * ============================================================
- * 📌 MÓDULO: GESTIÓN DE CARGOS
+ * 📌 MÓDULO: Gestión de cargos
  * ============================================================
- * Similar a gestión de comuneros:
- * ✔ Manejo robusto de endpoints (fallback)
- * ✔ Normalización de datos
- * ✔ Manejo de errores seguro
- * ✔ No rompe flujo si falla backend
  */
 
 /**
- * ============================================================
- * 📌 CONFIGURACIÓN HTTP
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CONFIGURACIÓN HTTP
  */
 const db = window.SYSGEM_DB;
 
 /**
  * Función base HTTP con:
- * ✔ Timeout
- * ✔ JSON automático
- * ✔ Headers estándar
  */
 const dbApiFetch = (db && db.apiFetch)
     ? db.apiFetch.bind(db)
@@ -56,10 +46,7 @@ const dbApiFetch = (db && db.apiFetch)
     };
 
 /**
- * ============================================================
- * 📌 ENDPOINTS (CON FALLBACK)
- * ============================================================
- * 🔥 NUEVO: ahora soporta múltiples rutas como comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ENDPOINTS
  */
 const ENDPOINTS = {
     dashboardCandidates: [], // (desactivado)
@@ -78,9 +65,7 @@ const ENDPOINTS = {
 };
 
 /**
- * ============================================================
- * 📌 ESTADO GLOBAL
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADO GLOBAL
  */
 const state = {
     comuneroObjetivo: null,
@@ -91,9 +76,7 @@ const state = {
 };
 
 /**
- * ============================================================
- * 📌 INIT
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INIT
  */
 document.addEventListener("DOMContentLoaded", () => {
     attachAssignHandler();
@@ -101,15 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cargarCargosDesdeBD().catch((err) => {
         console.error(err);
-        setStatusMessage("❌ Error cargando cargos");
+        setStatusMessage("Error cargando cargos");
     });
 });
 
 /**
- * ============================================================
- * 📌 CARGAR CARGOS (CON FALLBACK)
- * ============================================================
- * 🔥 NUEVO: estilo comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR DATOS
  */
 async function cargarCargosDesdeBD() {
     try {
@@ -144,10 +124,7 @@ function llenarSelectCargos(cargos) {
     state.cargosDisponibles = cargos;
 }
 /**
- * ============================================================
- * 📌 NORMALIZACIÓN DE CARGOS
- * ============================================================
- * 🔥 NUEVO: igual que comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// NORMALIZACIÓN DE CARGOS
  */
 function normalizeCargos(payload) {
 
@@ -164,9 +141,7 @@ function normalizeCargos(payload) {
 }
 
 /**
- * ============================================================
- * 📌 RULETA
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// RULETA
  */
 function attachRuletaEvents() {
 
@@ -190,9 +165,7 @@ function attachRuletaEvents() {
 }
 
 /**
- * ============================================================
- * 📌 SUGERIR FECHAS (YA EXISTENTE)
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// SUGERIR FECHAS
  */
 function sugerirFechas(cargo) {
 
@@ -221,10 +194,7 @@ function sugerirFechas(cargo) {
 }
 
 /**
- * ============================================================
- * 📌 CARGAR ELEGIBLES (CON FALLBACK)
- * ============================================================
- * 🔥 NUEVO estilo comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR ELEGIBLES
  */
 async function cargarElegibles(cargoId) {
 
@@ -245,7 +215,7 @@ async function cargarElegibles(cargoId) {
 
             renderRuleta();
 
-            setStatusMessage(`✅ ${state.elegibles.length} elegibles encontrados`);
+            setStatusMessage(`${state.elegibles.length} elegibles encontrados`);
             return;
 
         } catch (err) {
@@ -254,13 +224,11 @@ async function cargarElegibles(cargoId) {
     }
 
     console.error(lastError);
-    setStatusMessage("❌ Error cargando elegibles");
+    setStatusMessage("Error cargando elegibles");
 }
 
 /**
- * ============================================================
- * 📌 RENDER RULETA
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// RENDER RULETA
  */
 function renderRuleta() {
 
@@ -279,9 +247,7 @@ function renderRuleta() {
 }
 
 /**
- * ============================================================
- * 📌 GIRAR RULETA
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// GIRAR RULETA
  */
 function girarRuleta() {
 
@@ -300,9 +266,7 @@ function girarRuleta() {
 }
 
 /**
- * ============================================================
- * 📌 ASIGNAR CARGO
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ASIGNAR CARGO
  */
 function attachAssignHandler() {
 
@@ -353,15 +317,13 @@ function attachAssignHandler() {
 
         } catch (err) {
             console.error(err);
-            setStatusMessage("❌ Error al asignar");
+            setStatusMessage("Error al asignar");
         }
     });
 }
 
 /**
- * ============================================================
- * 📌 API ASIGNAR (CON FALLBACK)
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// API ASIGNAR
  */
 async function assignCargo(body) {
 
@@ -386,11 +348,23 @@ async function assignCargo(body) {
 
     throw lastError;
 }
-
 /**
- * ============================================================
- * 📌 HELPERS (REUTILIZADOS)
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADÍSTICAS
+ */
+function computeStats(comuneros) {
+    const total = comuneros.length;
+    const activos = comuneros.filter(c => c.estado === "activo").length;
+    const baja = comuneros.filter(c => c.estado === "baja").length;
+
+    return {
+        total,
+        activos,
+        inactivos: total - activos - baja,
+        baja
+    };
+}
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// HELPERS
  */
 function setStatusMessage(msg) {
     const el = document.getElementById("roulette-message");

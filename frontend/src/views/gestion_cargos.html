@@ -16,7 +16,6 @@
 <body>
 <!-- Contenedor -->
 <div class="container">
-  <div class="container__header">
     <!-- Header -->
     <header class="topnav" id="topnav"></header>
     <main class="dashboard">
@@ -130,14 +129,13 @@
 
     <!-- Footer inyectado dinámicamente -->
     <footer class="footer" id="footer"></footer>
-  </div>
 </div>
 
-<!-- Capa compartida de conexión/API + scripts de sesión y módulo -->
+<!-- Capa compartida de conexión/API y scripts de sesión y módulo -->
 <script src="../Javascripts/DB.js"></script>
 <script src="../Javascripts/gestion_cargos.js"></script>
 <script src="../Javascripts/global.js"></script>
-<!-- Carga dinámica de componentes compartidos (header y footer) -->
+<!-- Carga dinámica de componentes (header y footer) -->
 <script>
   fetch('../components/header_panel_control.html')
           .then((res) => res.text())
@@ -145,15 +143,6 @@
             document.getElementById('topnav').innerHTML = html;
             initLogout();
             renderUser();
-          });
-
-  fetch('../components/footer.html')
-          .then((res) => res.text())
-          .then((html) => {
-            document.getElementById('footer').innerHTML = html;
-          })
-          .catch(() => {
-            document.getElementById('footer').textContent = 'SYSGEM';
           });
 </script>
 </body>

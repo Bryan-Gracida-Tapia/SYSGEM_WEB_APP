@@ -1,5 +1,14 @@
 "use strict";
+/**
+ * ============================================================
+ * 📌 MÓDULO: Perfil de comunero
+ * ============================================================
+ */
 
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
+ * Se ejecuta al cargar el DOM.
+ */
 document.addEventListener("DOMContentLoaded", async () => {
     const sesion = JSON.parse(localStorage.getItem("sysgem_user"));
 
@@ -8,23 +17,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-
     await cargarDatosPerfil(sesion.id);
 
-    const btnLogout = document.getElementById('logout-btn');
-    if (btnLogout) {
-        btnLogout.onclick = () => {
-            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-                localStorage.removeItem("sysgem_user");
-                // Ajustado a la misma carpeta views
-                window.location.href = "./Login.html";
-            }
-        };
-    }
-
-
+    // Notificaciones
     const btnNotif = document.getElementById('notification-btn');
-
     if (btnNotif) {
         btnNotif.onclick = async () => {
             try {
@@ -32,8 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const result = await res.json();
 
                 if (result.success && result.data.length > 0) {
-                    // Creamos una cadena de texto para acumular los anuncios
-                    let listaAnuncios = "🔔 TABLÓN DE ANUNCIOS 🔔\n\n";
+                    let listaAnuncios = "ANUNCIOS \n\n";
 
                     result.data.forEach((anuncio, index) => {
                         listaAnuncios += `${index + 1}.- ${anuncio.nombre.toUpperCase()}\n`;
@@ -52,7 +47,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     }
 });
-
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Cargar datos
+ * Se ejecuta al cargar el DOM.
+ */
 async function cargarDatosPerfil(userId) {
     try {
         const res = await window.SYSGEM_DB.apiFetch(`/perfil/${userId}`);
