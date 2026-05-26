@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Configuración base de la vista y recursos -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>SYSGEM - Mi Perfil</title>
@@ -10,8 +11,9 @@
 </head>
 <body>
 <div class="container">
+    <!-- Header -->
     <header class="topnav" id="topnav"></header>
-
+    <!-- Columna principal  -->
     <main class="dashboard__section--profile">
 
         <section class="shortcuts">
@@ -127,15 +129,15 @@
             </div>
         </section>
     </main>
-
+    <!-- Footer  -->
     <footer class="footer" id="footer"></footer>
 </div>
-
+<!-- Capa compartida de conexión/API + scripts base y del módulo -->
 <script src="../Javascripts/DB.js"></script>
 <script src="../Javascripts/perfil.js"></script>
 <script src="../Javascripts/global.js"></script>
+<!-- Carga dinámica de header -->
 <script>
-    // Carga de componentes (Header y Footer)
     fetch('../components/header_profile.html')
         .then(res => res.text())
         .then(html => {
