@@ -1,14 +1,19 @@
 "use strict";
 const db = require('../config/db');
+/**
+ * ============================================================
+ * 📌 Controller: anuncios
+ * ============================================================
+ */
 
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Controladores CRUD
+ */
 const AnunciosController = {
-    // 1. OBTENER ANUNCIOS (Para la campana y la lista de gestión)
+    // Obtener anuncios
     async obtenerAnuncios(req, res) {
         try {
-            // DATE_FORMAT ayuda a que la fecha llegue limpia (AAAA-MM-DD) al input del frontend
-            const sql = `SELECT id_anuncio, nombre, descripcion, 
-                         DATE_FORMAT(fecha, '%Y-%m-%d') as fecha 
-                         FROM anuncios ORDER BY fecha DESC`;
+            const sql = `SELECT id_anuncio, nombre, descripcion, DATE_FORMAT(fecha, '%Y-%m-%d') as fecha FROM anuncios ORDER BY fecha DESC`;
             const [rows] = await db.query(sql);
             res.json({ success: true, data: rows });
         } catch (err) {
@@ -17,7 +22,7 @@ const AnunciosController = {
         }
     },
 
-    // 2. CREAR ANUNCIO (POST)
+    // POST
     async crearAnuncio(req, res) {
         const { nombre, descripcion, fecha } = req.body;
         try {
@@ -30,9 +35,9 @@ const AnunciosController = {
         }
     },
 
-    // 3. ELIMINAR ANUNCIO (DELETE)
+    // DELETE
     async eliminarAnuncio(req, res) {
-        const { id } = req.params; // Este 'id' viene de la ruta /:id
+        const { id } = req.params;
         try {
             const sql = "DELETE FROM anuncios WHERE id_anuncio = ?";
             const [result] = await db.query(sql, [id]);
@@ -48,7 +53,7 @@ const AnunciosController = {
         }
     },
 
-    // 4. EDITAR ANUNCIO (PUT)
+    // PUT
     async editarAnuncio(req, res) {
         const { id } = req.params;
         const { nombre, descripcion, fecha } = req.body;

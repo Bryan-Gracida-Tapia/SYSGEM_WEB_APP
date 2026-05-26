@@ -2,9 +2,13 @@ const express = require('express');
 const router = express.Router();
 const anunciosController = require('./anuncios_controller');
 
+// GET
 router.get('/', anunciosController.obtenerAnuncios);
+// POST
 router.post('/', anunciosController.crearAnuncio);
-router.delete('/:id', anunciosController.eliminarAnuncio); // Para eliminar
-router.put('/:id', anunciosController.editarAnuncio);     // Para editar
+// DELETE
+router.delete('/:id', anunciosController.eliminarAnuncio);
+// PUT
+router.put('/:id', anunciosController.editarAnuncio);
 
 module.exports = router;

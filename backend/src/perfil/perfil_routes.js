@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const PerfilController = require('./perfil_controller');
 
-// Usamos obtenerDatos que es la función que ya tienes en tu controlador
+// GET
 router.get('/:id', async (req, res) => {
     try {
         const datos = await PerfilController.obtenerDatos(req.params.id);

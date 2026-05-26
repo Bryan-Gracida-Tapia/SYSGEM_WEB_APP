@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const LoginController = require("./login_controller");
-
+// POST
 router.post("/", async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
             user: usuario
         });
     } catch (err) {
-        // Capturamos los errores del controlador (usuario no existe / clave mal)
+        // Capturamos los errores del controlador (usuario no existe / contraseña incorrecta)
         res.status(401).json({
             success: false,
             message: err.message
