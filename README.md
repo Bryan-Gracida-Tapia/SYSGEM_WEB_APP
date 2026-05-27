@@ -6,12 +6,12 @@ Aplicación web desarrollada con el objetivo de facilitar la gestión de datos d
 
 ## Características
 
-- 🔐 Sistema de login de usuarios  
-- 👤 Gestión de perfiles  
-- 📢 Publicación y administración de anuncios  
-- 🏛️ Gestión de cargos comuneros  
-- 🧩 Componentes reutilizables (header, footer)  
-- 🎨 Interfaz organizada con HTML, CSS y JavaScript  
+-  Sistema de login de usuarios  
+-  Gestión de perfiles  
+-  Publicación y administración de anuncios  
+-  Gestión de cargos comuneros  
+-  Componentes reutilizables (header, footer)  
+-  Interfaz organizada con HTML, CSS y JavaScript  
 
 ---
 
@@ -21,15 +21,33 @@ SYSGEM_WEB/
 │
 ├── backend/
 |	│
-|	├── server.js        
+|	├── server.js   
+|	│
+|	├── .env   
 |	│
 |	└── src/
 |    		├── config/
 |    		│   └── db.js  
 |    		│
 |    		├── comuneros/
-|    		│   ├── comuneros.controller.js   
-|    		│   └── comuneros.routes.js     
+|    		│   ├── comuneros_controller.js   
+|    		│   └── comuneros_routes.js   
+|    		│
+|    		├── asignaciones_cargo/
+|    		│   ├── asignaciones_controller.js   
+|    		│   └── asignaciones_routes.js 
+|    		│
+|    		├── anuncios/
+|    		│   ├── anuncios_controller.js   
+|    		│   └── anuncios_routes.js   
+|    		│
+|    		├── login/
+|    		│   ├── login_controller.js   
+|    		│   └── login_routes.js
+|    		│
+|    		├── perfil/
+|    		│   ├── perfil_controller.js   
+|    		│   └── perfil_routes.js    
 |
 ├── frontend/
 |	│
@@ -38,19 +56,30 @@ SYSGEM_WEB/
 |	│
 |	└── src/
 |    		├── public/
-|    		│   └── logo.png
+|    		│   └── assets/
+|    		│       └── logo.png
 |    		│
 |    		├── components/
-|    		│   └── header_panel_de_control.html
+|    		│   ├── header_panel_de_control.html
+|    		│   ├── header_panel_de_anuncios.html
+|    		│   ├── header_profile.html
+|    		│   └── footer.html
 |    		│
 |    		├── Javascripts/
-|    		│   ├── DB.js   # (NUEVO)
-|    		│   └── gestion_cargos_comuneros.js
-|    		│   └── global.js
+|    		│   ├── DB.js 
+|    		│   ├── global.js
+|    		│   ├── gestion_cargos.js
+|    		│   ├── gestion_cargos_comuneros.js
+|    		│   ├── login.js
+|    		│   ├── perfil.js
+|    		│   └── anuncios.js
 |    		│
 |    		├── views/
-|    		│   ├── Gestion_cargos.html
-|    		│   └── Gestion_cargos_comuneros.html
+|    		│   ├── gestion_cargos.html
+|    		│   ├── gestion_cargos_comuneros.html
+|    		│   ├── gestion_de_anuncios.html
+|    		│   ├── login.html
+|    		│   └── user_perfil.html
 |    		│
 |    		├── styles/
 |    		│   ├── global.css

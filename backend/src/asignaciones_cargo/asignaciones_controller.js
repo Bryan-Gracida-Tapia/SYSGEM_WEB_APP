@@ -1,11 +1,13 @@
 "use strict";
-
 const db = require("../config/db");
+/**
+ * ============================================================
+ * 📌 Controller: anuncios
+ * ============================================================
+ */
 
 /**
- * ============================================
- * 📌 OBTENER COMUNEROS ELEGIBLES
- * ============================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener candidatos
  */
 exports.getElegibles = async (req, res) => {
     try {
@@ -25,9 +27,7 @@ exports.getElegibles = async (req, res) => {
 };
 
 /**
- * ============================================
- * 📌 ASIGNAR CARGO
- * ============================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Asignar cargo
  */
 exports.asignarCargo = async (req, res) => {
     try {
@@ -38,7 +38,7 @@ exports.asignarCargo = async (req, res) => {
             fecha_fin
         } = req.body;
 
-        // VALIDACIÓN
+        // Validacion de datos
         if (!comunero_id || !cargo_id || !fecha_inicio || !fecha_fin) {
             return res.status(400).json({
                 success: false,
@@ -46,7 +46,7 @@ exports.asignarCargo = async (req, res) => {
             });
         }
 
-        // VALIDAR SI YA TIENE CARGO ACTIVO
+        // Validar si ya tiene un cargo activo
         const [activo] = await db.query("SELECT id FROM asignaciones_cargo WHERE comunero_id = ? AND activo = 1", [comunero_id]);
 
         if (activo.length > 0) {
@@ -56,7 +56,7 @@ exports.asignarCargo = async (req, res) => {
             });
         }
 
-        // INSERTAR
+        // Insert
         await db.query("INSERT INTO asignaciones_cargo(comunero_id, cargo_id, fecha_inicio, fecha_fin, activo) VALUES (?, ?, ?, ?, 1)", [comunero_id, cargo_id, fecha_inicio, fecha_fin]);
 
         res.json({
@@ -73,9 +73,7 @@ exports.asignarCargo = async (req, res) => {
     }
 };
 /**
- * ============================================
- * 📌 OBTENER CARGOS DESDE BD
- * ============================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Cargar datos
  */
 exports.getCargos = async (req, res) => {
     try {

@@ -1,9 +1,13 @@
 "use strict";
 
 const db = require("../config/db");
-
 /**
- * Mapear datos
+ * ============================================================
+ * 📌 Controller: anuncios
+ * ============================================================
+ */
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Mapear datos
  */
 function mapComunero(row) {
     return {
@@ -21,7 +25,7 @@ function mapComunero(row) {
 }
 
 /**
- * Obtener todos
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener datos
  */
 exports.getComuneros = async (req, res) => {
     try {
@@ -33,7 +37,7 @@ exports.getComuneros = async (req, res) => {
 };
 
 /**
- * Crear comunero
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Create
  */
 exports.createComunero = async (req, res) => {
     try {
@@ -73,7 +77,7 @@ exports.createComunero = async (req, res) => {
 };
 
 /**
- * Actualizar
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Update
  */
 exports.updateComunero = async (req, res) => {
     try {
@@ -101,7 +105,7 @@ exports.updateComunero = async (req, res) => {
 };
 
 /**
- * Eliminar
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Delete
  */
 exports.deleteComunero = async (req, res) => {
     try {
@@ -117,7 +121,7 @@ exports.deleteComunero = async (req, res) => {
 };
 
 /**
- * Cambiar estado
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Cambiar estado
  */
 exports.changeEstado = async (req, res) => {
     try {
