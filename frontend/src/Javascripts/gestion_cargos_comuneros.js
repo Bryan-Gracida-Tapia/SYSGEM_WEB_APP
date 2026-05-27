@@ -432,7 +432,8 @@ async function submitComunero(e) {
         !payload.estadoCivil ||
         !payload.tipo ||
         !payload.direccion ||
-        !payload.correo
+        !payload.correo ||
+        !payload.password
     ) {
         setStatusMessage("Todos los campos son obligatorios");
         return;
@@ -469,7 +470,8 @@ function buildComuneroPayload() {
         estadoCivil: document.querySelector('input[name="civil_status"]:checked')?.value,
         tipo: document.querySelector('input[name="type"]:checked')?.value,
         direccion: document.getElementById("address")?.value.trim(),
-        correo: document.getElementById("email")?.value.trim()
+        correo: document.getElementById("email")?.value.trim(),
+        password: document.getElementById("password")?.value.trim()
     };
 
     return payload;

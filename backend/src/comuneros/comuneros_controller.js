@@ -23,6 +23,17 @@ function mapComunero(row) {
         fechaInicio: row.fecha_inicio
     };
 }
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Funcion para crear username
+ */
+function generarUsername(nombreCompleto) {
+    return nombreCompleto
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ".")        // espacios → puntos
+        .normalize("NFD")            // quitar acentos
+        .replace(/[\u0300-\u036f]/g, "");
+}
 
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener datos
@@ -49,7 +60,8 @@ exports.createComunero = async (req, res) => {
             estadoCivil,
             tipo,
             direccion,
-            correo
+            correo,
+            password
         } = req.body;
 
         // Normalizar tipo
@@ -60,6 +72,16 @@ exports.createComunero = async (req, res) => {
             return res.status(400).json({ error: "Faltan campos obligatorios" });
         }
 
+        // Generar username
+        const username = generarUsername(nombreCompleto);
+
+        // Encriptar contraseña
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Transacción
+        await db.query("START TRANSACTION");
+
+        // Crear comunero
         const [result] = await db.query(
             "INSERT INTO comuneros (nombre_completo, fecha_nacimiento, estado_civil, tipo, direccion, correo, estado, fecha_inicio) VALUES (?, ?, ?, ?, ?, ?, 'activo', NOW())"
             ,[nombreCompleto, fechaNacimiento, estadoCivil, tipo, direccion, correo]
