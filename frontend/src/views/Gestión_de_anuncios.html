@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Configuración base de la vista y recursos -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Módulo de Gestión de anuncios</title>
@@ -10,10 +11,13 @@
 </head>
 <body>
 <div class="container">
+    <!-- Header -->
     <header class="topnav" id="topnav"></header>
 
     <main class="dashboard">
+        <!-- Columna principal  -->
         <section class="dashboard__section">
+            <!-- Catálogo visual de acciones disponibles -->
             <article class="card">
                 <h2 class="card__title">Bienvenido</h2>
                 <p class="card__description">
@@ -31,7 +35,7 @@
                     </button>
                 </div>
             </article>
-
+            <!-- Gestión operativa: alta/edición -->
             <article class="card">
                 <h2 class="card__title">Panel de Edición</h2>
                 <p class="card__description--gestion">
@@ -63,6 +67,7 @@
                     </div>
                 </form>
             </article>
+            <!-- Listado de anuncios publicados -->
             <article class="card" >
                 <h2 class="card__title">Anuncios Publicados</h2>
                 <p class="card__description">Lista completa de anuncios en la base de datos.</p>
@@ -73,37 +78,25 @@
                 </div>
             </article>
         </section>
-
+        <!-- Barra lateral: cargos activos  -->
         <aside class="dashboard__aside" >
-            <section class="card">
-                <h3 class="card__title">Cargos activos</h3>
-                <div class="card__action">
-                    <div class="action-card">
-                        <div class="action-card__avatar"><i class="fa-solid fa-user"></i></div>
-                        <div class="action-card__info">
-                            <span class="action-card__name">Juan Perez</span>
-                            <span class="action-card__description">Presidente</span>
-                            <span class="action-card__date">Activo desde <strong>2022</strong></span>
-                        </div>
-                    </div>
-                    <div class="action-card" >
-                        <div class="action-card__avatar"><i class="fa-solid fa-user"></i></div>
-                        <div class="action-card__info">
-                            <span class="action-card__name">María Gómez</span>
-                            <span class="action-card__description">Tesorera</span>
-                            <span class="action-card__date">Activa desde <strong>2023</strong></span>
-                        </div>
-                    </div>
+            <div class="card">
+                <!-- Acción de soporte para atención del usuario -->
+                <div class="summary-card summary-card--addition">
+                    <h4 class="summary-card__title">Soporte</h4>
+                    <p class="summary-card__description">¿Necesitas ayuda con el sistema?</p>
+                    <button class="summary-card__btn" type="button">Contactar al soporte</button>
                 </div>
-            </section>
+            </div>
         </aside>
     </main>
-
+    <!-- Footer  -->
     <footer class="footer" id="footer"></footer>
 </div>
-
+<!-- Capa compartida de conexión/API + scripts base y del módulo -->
 <script src="../Javascripts/anuncios.js"></script>
 <script src="../Javascripts/global.js"></script>
+<!-- Carga dinámica de header -->
 <script>
 
     fetch('../components/header_panel_de_anuncios.html')

@@ -28,15 +28,44 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const result = await res.json();
 
                 if (result.success && result.data.length > 0) {
-                    let listaAnuncios = "ANUNCIOS \n\n";
+                    let contenedor = document.getElementById("alert-anuncios");
+
+                    if (!contenedor) {
+                        contenedor = document.createElement("div");
+                        contenedor.id = "alert-anuncios";
+                        contenedor.className = "alert-anuncios";
+                        document.body.appendChild(contenedor);
+                    }
+
+                    let html = `
+                        <div class="alert-anuncios__header">
+                            <h3 class="alert-anuncios__title">Notificaciones</h3>
+                            <span class="alert-anuncios__subtitle">Anuncios vigentes</span>
+                        </div>
+                    
+                        <div class="alert-anuncios__list">
+                    `;
 
                     result.data.forEach((anuncio, index) => {
-                        listaAnuncios += `${index + 1}.- ${anuncio.nombre.toUpperCase()}\n`;
-                        listaAnuncios += `📌 ${anuncio.descripcion}\n`;
-                        listaAnuncios += `----------------------------------\n`;
+                        html += `
+                            <div class="alert-anuncios__item">
+                                <strong>${index + 1}. ${anuncio.nombre.toUpperCase()}</strong>
+                                <p>${anuncio.descripcion}</p>
+                            </div>
+                        `;
                     });
 
-                    alert(listaAnuncios);
+                    html += `
+                        <button class="alert-anuncios__btn"
+                            onclick="document.getElementById('alert-anuncios').remove()">
+                            Aceptar
+                        </button>
+                    `;
+
+                    contenedor.innerHTML = html;
+
+                    /* Animación */
+                    setTimeout(() => contenedor.classList.add("show"), 10);
                 } else {
                     alert("No hay anuncios por el momento.");
                 }
