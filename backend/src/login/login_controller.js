@@ -1,4 +1,5 @@
 "use strict";
+const bcrypt = require("bcrypt");
 const db = require("../config/db");
 /**
  * ============================================================
@@ -21,8 +22,10 @@ const LoginController = {
 
         const usuario = rows[0];
 
-        // Verificación de contraseña
-        if (usuario.password_hash !== password) {
+        // Se encripta la contraseña recibida para la correcta validacion
+        const passwordValida = await bcrypt.compare(password, usuario.password_hash);
+
+        if (!passwordValida) {
             throw new Error("Contraseña incorrecta");
         }
 

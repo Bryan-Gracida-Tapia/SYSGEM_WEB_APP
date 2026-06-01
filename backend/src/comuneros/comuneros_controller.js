@@ -1,5 +1,5 @@
 "use strict";
-
+const bcrypt = require("bcrypt");
 const db = require("../config/db");
 /**
  * ============================================================
@@ -23,6 +23,17 @@ function mapComunero(row) {
         fechaInicio: row.fecha_inicio
     };
 }
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Funcion para crear username
+ */
+function generarUsername(nombreCompleto) {
+    return nombreCompleto
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ".")        // espacios → puntos
+        .normalize("NFD")            // quitar acentos
+        .replace(/[\u0300-\u036f]/g, "");
+}
 
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener datos
@@ -40,6 +51,8 @@ exports.getComuneros = async (req, res) => {
  * ////////////////////////////////////////////////////////////////////////////////////////////////// Create
  */
 exports.createComunero = async (req, res) => {
+    const connection = await db.getConnection(); // ✅ CREAR CONEXIÓN
+
     try {
         console.log("BODY:", req.body);
 
@@ -49,30 +62,61 @@ exports.createComunero = async (req, res) => {
             estadoCivil,
             tipo,
             direccion,
-            correo
+            correo,
+            password
         } = req.body;
 
-        // Normalizar tipo
         tipo = tipo?.replace("type_", "");
 
-        // Validación
-        if (!nombreCompleto || !fechaNacimiento || !estadoCivil || !tipo || !direccion || !correo) {
+        if (!nombreCompleto || !fechaNacimiento || !estadoCivil || !tipo || !direccion || !correo || !password) {
             return res.status(400).json({ error: "Faltan campos obligatorios" });
         }
 
-        const [result] = await db.query(
-            "INSERT INTO comuneros (nombre_completo, fecha_nacimiento, estado_civil, tipo, direccion, correo, estado, fecha_inicio) VALUES (?, ?, ?, ?, ?, ?, 'activo', NOW())"
-            ,[nombreCompleto, fechaNacimiento, estadoCivil, tipo, direccion, correo]
+        const username = generarUsername(nombreCompleto);
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+
+        await connection.beginTransaction();
+
+        // Crear comunero
+        const [result] = await connection.query(
+            `INSERT INTO comuneros 
+            (nombre_completo, fecha_nacimiento, estado_civil, tipo, direccion, correo, estado, fecha_inicio) 
+            VALUES (?, ?, ?, ?, ?, ?, 'activo', NOW())`,
+            [nombreCompleto, fechaNacimiento, estadoCivil, tipo, direccion, correo]
         );
 
+        const comuneroId = result.insertId;
+
+        //
+        console.log("Comunero ID:", comuneroId);
+
+        // 2. Crear usuario
+        await connection.query(
+            `INSERT INTO usuarios (username, password_hash, role, comunero_id)
+             VALUES (?, ?, 'comunero', ?)`,
+            [username, hashedPassword, comuneroId]
+        );
+
+        //
+        await connection.commit();
+
         res.json({
-            success: true,
-            id: result.insertId
+            message: "Comunero y usuario creados correctamente"
         });
 
-    } catch (err) {
-        console.error("ERROR SQL:", err);
-        res.status(500).json({ error: err.message });
+    } catch (error) {
+        if (connection) await connection.rollback();
+
+        console.error("ERROR:", error);
+
+        res.status(500).json({
+            error: "Error al crear comunero y usuario",
+            detalle: error.message
+        });
+
+    } finally {
+        if (connection) connection.release();
     }
 };
 
