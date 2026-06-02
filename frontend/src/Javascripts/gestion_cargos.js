@@ -55,8 +55,8 @@ const ENDPOINTS = {
         "/asignaciones_cargo/cargos"
     ],
 
-    elegiblesCandidates: () => [
-        `/asignaciones_cargo/elegibles`
+    elegiblesCandidates: (cargoId) => [
+        `/asignaciones_cargo/elegibles/${cargoId}`
     ],
 
     asignarCargoCandidates: [
@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(err);
         setStatusMessage("Error cargando cargos");
     });
+    cargarComunerosActivos();
 });
 
 /**
@@ -139,7 +140,44 @@ function normalizeCargos(payload) {
         activo: c.activo
     }));
 }
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Cargar activos
+ */
+async function cargarComunerosActivos() {
+    try {
+        const res = await apiFetch("/asignaciones_cargo/activos");
 
+        const container = document.getElementById("active-roles-list");
+
+        if (!res.success || res.data.length === 0) {
+            container.innerHTML = `
+                <div class="person-card">
+                    <div class="person-card__info">
+                        <div class="person-card__role">
+                            No hay comuneros con cargos activos
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = res.data.map(c => `
+            <div class="person-card">
+                <div class="person-card__info">
+                    <div class="person-card__name">${c.nombre_completo}</div>
+                    <div class="person-card__role">Cargo: ${c.cargo}</div>
+                    <div class="person-card__meta">
+                        Inicio: ${formatearFecha(c.fecha_inicio)}
+                    </div>
+                </div>
+            </div>
+        `).join("");
+
+    } catch (error) {
+        console.error("Error cargando activos:", error);
+    }
+}
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// RULETA
  */
@@ -158,7 +196,7 @@ function attachRuletaEvents() {
 
         sugerirFechas(cargo);
 
-        await cargarElegibles();
+        await cargarElegibles(cargoId);
     });
 
     btn?.addEventListener("click", girarRuleta);
@@ -199,7 +237,7 @@ function sugerirFechas(cargo) {
 async function cargarElegibles(cargoId) {
 
     setStatusMessage("Buscando elegibles...");
-
+    console.log("cargoId:", cargoId);
     let lastError;
 
     for (const endpoint of ENDPOINTS.elegiblesCandidates(cargoId)) {
