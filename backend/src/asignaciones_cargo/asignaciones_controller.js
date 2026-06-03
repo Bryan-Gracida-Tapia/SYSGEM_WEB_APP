@@ -11,7 +11,7 @@ const db = require("../config/db");
 exports.getActivos = async (req, res) => {
     try {
 
-        const [rows] = await db.query(`SELECT c.id,c.nombre_completo,ca.nombre AS cargo,ac.fecha_inicio,ac.fecha_finFROM asignaciones_cargo ac JOIN comuneros c ON c.id = ac.comunero_id JOIN cargos ca ON ca.id = ac.cargo_id WHERE ac.activo = 1 ORDER BY ac.fecha_inicio DESC`);
+        const [rows] = await db.query(`SELECT c.id, c.nombre_completo,ca.nombre AS cargo,ac.fecha_inicio,ac.fecha_fin FROM asignaciones_cargo ac JOIN comuneros c ON c.id = ac.comunero_id JOIN cargos ca ON ca.id = ac.cargo_id WHERE ac.activo = 1 ORDER BY ac.fecha_inicio DESC`);
 
         res.json({
             success: true,
@@ -19,7 +19,7 @@ exports.getActivos = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error comuneros activos:", error);
+        console.error("🔥 ERROR REAL:", error);
         res.status(500).json({
             success: false,
             message: "Error obteniendo comuneros activos"
