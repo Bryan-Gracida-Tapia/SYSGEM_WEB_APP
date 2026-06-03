@@ -78,15 +78,18 @@ const state = {
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// INIT
  */
-document.addEventListener("DOMContentLoaded", () => {
-    attachAssignHandler();
-    attachRuletaEvents();
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        attachAssignHandler();
+        attachRuletaEvents();
 
-    cargarCargosDesdeBD().catch((err) => {
+        await cargarCargosDesdeBD();
+        await cargarComunerosActivos();
+
+    } catch (err) {
         console.error(err);
-        setStatusMessage("Error cargando cargos");
-    });
-    cargarComunerosActivos();
+        setStatusMessage("Error inicializando la app");
+    }
 });
 
 /**
@@ -144,12 +147,14 @@ function normalizeCargos(payload) {
  * ////////////////////////////////////////////////////////////////////////////////////////////////// Cargar activos
  */
 async function cargarComunerosActivos() {
+    const container = document.getElementById("active-roles-list");
+
+    if (!container) return;
+
     try {
-        const res = await apiFetch("/asignaciones_cargo/activos");
+        const res = await dbApiFetch("/asignaciones_cargo/activos");
 
-        const container = document.getElementById("active-roles-list");
-
-        if (!res.success || res.data.length === 0) {
+        if (!res.success || !res.data?.length) {
             container.innerHTML = `
                 <div class="person-card">
                     <div class="person-card__info">
@@ -176,7 +181,23 @@ async function cargarComunerosActivos() {
 
     } catch (error) {
         console.error("Error cargando activos:", error);
+
+        container.innerHTML = `
+            <div class="person-card">
+                <div class="person-card__info">
+                    <div class="person-card__role">
+                        Error cargando comuneros activos
+                    </div>
+                </div>
+            </div>
+        `;
     }
+}
+
+function formatearFecha(fecha) {
+    if (!fecha) return "Sin fecha";
+    const f = new Date(fecha);
+    return f.toLocaleDateString("es-MX");
 }
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// RULETA
