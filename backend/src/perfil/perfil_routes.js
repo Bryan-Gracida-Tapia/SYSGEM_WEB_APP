@@ -6,6 +6,18 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
+router.get('/:id/historial', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const historial = await PerfilController.obtenerHistorialCargos(userId);
+        res.json({ success: true, data: historial });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+
 router.get('/:id', async (req, res) => {
     try {
         const datos = await PerfilController.obtenerDatos(req.params.id);
@@ -15,12 +27,12 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+
 router.put('/:id', upload.single('foto_perfil'), async (req, res) => {
     try {
         const userId = req.params.id;
         const { correo } = req.body;
 
-        // Si subieron un archivo, su buffer binario se encontrará en req.file.buffer
         const fotoBinaria = req.file ? req.file.buffer : null;
 
         const actualizado = await PerfilController.actualizarDatos(userId, { correo, foto_perfil: fotoBinaria });
