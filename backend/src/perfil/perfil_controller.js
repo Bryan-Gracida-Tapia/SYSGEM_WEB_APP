@@ -1,19 +1,16 @@
 "use strict";
 const db = require("../config/db");
+
 /**
  * ============================================================
  * 📌 Controller: Perfil
  * ============================================================
  */
-
-/**
- * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener Datos
- */
 const PerfilController = {
     async obtenerDatos(userId) {
         const sql = `
             SELECT
-                c.id as comunero_id, c.nombre_completo, c.fecha_nacimiento, c.correo,
+                c.id as comunero_id, c.nombre_completo, c.fecha_nacimiento, c.correo, c.foto_perfil,
                 (SELECT ca.nombre FROM asignaciones_cargo ac
                                            JOIN cargos ca ON ac.cargo_id = ca.id
                  WHERE ac.comunero_id = c.id AND ac.activo = 1 LIMIT 1) as cargo_actual,
@@ -25,12 +22,30 @@ const PerfilController = {
         `;
         const [rows] = await db.query(sql, [userId]);
         if (rows.length === 0) throw new Error("Perfil no encontrado");
-        return rows[0];
+
+        const usuario = rows[0];
+
+        // 📌 Transformar el Buffer Binario de la base de datos a un String Base64 para el Frontend
+        if (usuario.foto_perfil) {
+            usuario.foto_perfil = usuario.foto_perfil.toString('base64');
+        }
+
+        return usuario;
     },
 
-    async actualizarDatos(userId, { correo }) {
-        const sql = "UPDATE comuneros SET correo = ? WHERE id = (SELECT comunero_id FROM usuarios WHERE id = ?)";
-        const [result] = await db.query(sql, [correo, userId]);
+    async actualizarDatos(userId, { correo, foto_perfil }) {
+        const sqlGetComunero = "SELECT comunero_id FROM usuarios WHERE id = ?";
+        const [rows] = await db.query(sqlGetComunero, [userId]);
+        if (rows.length === 0) return false;
+
+        const comuneroId = rows[0].comunero_id;
+
+        const sqlUpdate = `
+            UPDATE comuneros
+            SET correo = ?, foto_perfil = IFNULL(?, foto_perfil)
+            WHERE id = ?
+        `;
+        const [result] = await db.query(sqlUpdate, [correo, foto_perfil, comuneroId]);
         return result.affectedRows > 0;
     }
 };
