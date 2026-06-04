@@ -569,7 +569,7 @@ div{
 .shortcut{
     display: flex;
     flex: 0 0 32%;
-    min-width: 10rem;
+    min-width: 30rem;
     background: var(--card);
     padding: 0.9rem;
     border-radius: 12px;
@@ -580,7 +580,7 @@ div{
     cursor: pointer;
 }
 .shortcut__icon{
-    width: 2.4rem;
+    width: 3.4rem;
     height: 2.4rem;
     border: none;
     border-radius: 8px;
@@ -611,8 +611,8 @@ div{
     align-items: center;
 }
 .profile__icon{
-    width: 64px;
-    height: 64px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     background: linear-gradient(180deg,#e6f6ff,#dff6fb);
     display: flex;
@@ -620,14 +620,14 @@ div{
     justify-content: center;
     font-weight: 800;
     color: var(--accent-2);
-    font-size: 1.35rem;
+    font-size: 2.35rem;
     box-shadow: 0 6px 14px rgba(10,20,40,0.06);
     flex-shrink: 0;
 }
 .profile__info{
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
 }
 .profile__name{
     font-weight: 800;
