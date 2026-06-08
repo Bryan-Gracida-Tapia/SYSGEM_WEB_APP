@@ -1096,5 +1096,63 @@ div{
     font-style: italic;
 }
 
+.card-editor-hidden {
+    display: none;
+}
+
+.anuncio-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.anuncio-item__content {
+    flex: 1;
+}
+
+.anuncio-item__title {
+    margin: 0;
+    color: #1e293b;
+}
+
+.anuncio-item__description {
+    margin: 5px 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.anuncio-item__date {
+    color: #94a3b8;
+}
+
+.anuncio-item__actions {
+    display: flex;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.anuncio-item__btn-edit {
+    color: #2563eb;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.anuncio-item__btn-delete {
+    color: #ef4444;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.anuncio-item__status-text {
+    color: gray;
+    text-align: center;
+    padding: 20px;
+}
 
 

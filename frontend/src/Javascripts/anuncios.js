@@ -1,108 +1,186 @@
+"use strict";
 /**
  * ============================================================
- * 📌 MÓDULO: Gestión de anuncios
+ * MÓDULO: Gestión de anuncios (100% Separado de HTML y CSS)
  * ============================================================
  */
 
-/**
- * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
- * Se ejecuta al cargar el DOM.
- */
 document.addEventListener('DOMContentLoaded', () => {
     const formAdd = document.getElementById('form-add');
     const btnCancelar = document.getElementById('btn-cancel-add');
+    const btnCrearAnuncio = document.querySelector('.actions__button--create');
+    const contenedorEditor = formAdd ? formAdd.closest('.card') : null;
+    const tituloEditor = contenedorEditor ? contenedorEditor.querySelector('.card__title') : null;
+    const inputFecha = document.getElementById('publication-date');
+    const contenedorFecha = inputFecha ? inputFecha.closest('.form__group') : null;
+    const plantilla = document.getElementById('plantilla-anuncio');
+    const btnSoporte = document.querySelector('.summary-card__btn');
     let editandoId = null;
 
-    // Limpiar el formulario
-    const limpiarFormulario = () => {
+    if (contenedorEditor) contenedorEditor.classList.add('card-editor-hidden');
+    if (contenedorFecha) contenedorFecha.classList.add('card-editor-hidden');
+
+    if (btnSoporte) {
+        btnSoporte.addEventListener('click', () => {
+            const correoSoporte = "li01232317@unsij.edu.mx";
+            const asunto = encodeURIComponent("Soporte Técnico - Sistema de Gestión Municipal");
+            const cuerpo = encodeURIComponent(
+                "Hola, Equipo de Soporte Técnico:\n\n" +
+                "Tengo un problema/duda en el módulo de anuncios del sistema.\n" +
+                "[Describe detalladamente tu problema aquí]\n\n" +
+                "Saludos cordiales."
+            );
+            
+            const urlGmailWeb = `https://mail.google.com/mail/?view=cm&fs=1&to=${correoSoporte}&su=${asunto}&body=${cuerpo}`;
+
+            window.open(urlGmailWeb, '_blank');
+        });
+    }
+
+    const obtenerFechaActualLocal = () => {
+        const d = new Date();
+        const offset = d.getTimezoneOffset();
+        const fechaLocal = new Date(d.getTime() - (offset * 60 * 1000));
+        return fechaLocal.toISOString().split('T')[0];
+    };
+
+    const limpiarYQuitarFormulario = () => {
         editandoId = null;
         formAdd.reset();
         const btnEnviar = formAdd.querySelector('.form__button--primary');
-        btnEnviar.innerHTML = 'Publicar anuncio';
-        btnEnviar.style.backgroundColor = "";
+        if (btnEnviar) {
+            btnEnviar.innerHTML = 'Publicar anuncio';
+            btnEnviar.style.backgroundColor = "";
+        }
+        if (tituloEditor) tituloEditor.textContent = 'Panel de Edición';
+        if (contenedorEditor) contenedorEditor.classList.add('card-editor-hidden');
     };
 
-    if (btnCancelar) {
-        btnCancelar.addEventListener('click', limpiarFormulario);
+    if (btnCrearAnuncio) {
+        btnCrearAnuncio.addEventListener('click', () => {
+            limpiarYQuitarFormulario();
+            if (contenedorEditor) {
+                if (tituloEditor) tituloEditor.textContent = 'Crear Nuevo Anuncio';
+                if (inputFecha) inputFecha.value = obtenerFechaActualLocal();
+                contenedorEditor.classList.remove('card-editor-hidden');
+                contenedorEditor.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     }
 
-    // Obtener los anuncios desde backend
+    if (btnCancelar) {
+        btnCancelar.addEventListener('click', limpiarYQuitarFormulario);
+    }
+
     const cargarAnuncios = async () => {
         try {
             const res = await fetch('http://localhost:3000/api/anuncios');
             const result = await res.json();
             const contenedor = document.getElementById('lista-anuncios-db');
 
+            if (!contenedor) return;
+            contenedor.innerHTML = "";
+
             if (result.success && result.data.length > 0) {
-                contenedor.innerHTML = result.data.map(a => `
-                    <div class="anuncio-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee;">
-                        <div style="flex: 1;">
-                            <h4 style="margin: 0; color: #1e293b;">${a.nombre}</h4>
-                            <p style="margin: 5px 0; color: #64748b; font-size: 0.9rem;">${a.descripcion}</p>
-                            <small style="color: #94a3b8;">${a.fecha}</small>
-                        </div>
-                        <div style="display: flex; gap: 15px; margin-left: 20px;">
-                            <button onclick='prepararEdicion(${JSON.stringify(a)})' style="color: #2563eb; background:none; border:none; cursor:pointer; font-size: 1.2rem;">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="eliminarAnuncio(${a.id_anuncio})" style="color: #ef4444; background:none; border:none; cursor:pointer; font-size: 1.2rem;">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+                result.data.forEach(anuncio => {
+                    const fechaLimpia = anuncio.fecha ? anuncio.fecha.split('T')[0] : '';
+                    const clon = plantilla.content.cloneNode(true);
+
+                    clon.querySelector('.anuncio-item__title').textContent = anuncio.nombre;
+                    clon.querySelector('.anuncio-item__description').textContent = anuncio.descripcion;
+                    clon.querySelector('.anuncio-item__date-text').textContent = fechaLimpia;
+
+                    clon.querySelector('.anuncio-item__btn-edit').addEventListener('click', () => {
+                        prepararEdicion({
+                            id_anuncio: anuncio.id_anuncio,
+                            nombre: anuncio.nombre,
+                            descripcion: anuncio.descripcion,
+                            fecha: fechaLimpia
+                        });
+                    });
+
+                    clon.querySelector('.anuncio-item__btn-delete').addEventListener('click', () => {
+                        eliminarAnuncio(anuncio.id_anuncio);
+                    });
+
+                    contenedor.appendChild(clon);
+                });
             } else {
-                contenedor.innerHTML = "<p>No hay anuncios publicados.</p>";
+                const pMensaje = document.createElement('p');
+                pMensaje.className = 'anuncio-item__status-text';
+                pMensaje.textContent = 'No hay anuncios publicados actualmente.';
+                contenedor.appendChild(pMensaje);
             }
-        } catch (error) { console.error(error); }
+        } catch (error) {
+            console.error("Error al renderizar la lista de anuncios:", error);
+        }
     };
 
-    // Editar anuncio
-    window.prepararEdicion = (anuncio) => {
+    const prepararEdicion = (anuncio) => {
         editandoId = anuncio.id_anuncio;
+        if (contenedorEditor) contenedorEditor.classList.remove('card-editor-hidden');
+        if (tituloEditor) tituloEditor.textContent = 'Modificar Anuncio';
+
         document.getElementById('title').value = anuncio.nombre;
         document.getElementById('description').value = anuncio.descripcion;
-        document.getElementById('publication-date').value = anuncio.fecha;
+        if (inputFecha) inputFecha.value = anuncio.fecha;
 
         const btnEnviar = formAdd.querySelector('.form__button--primary');
-        btnEnviar.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
-        btnEnviar.style.backgroundColor = "#059669";
+        if (btnEnviar) {
+            btnEnviar.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
+            btnEnviar.style.backgroundColor = "#059669";
+        }
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (contenedorEditor) contenedorEditor.scrollIntoView({ behavior: 'smooth' });
     };
 
-    // Enviar formulario
     formAdd.onsubmit = async (e) => {
         e.preventDefault();
+        if (!inputFecha.value) inputFecha.value = obtenerFechaActualLocal();
+
         const datos = {
             nombre: document.getElementById('title').value,
             descripcion: document.getElementById('description').value,
-            fecha: document.getElementById('publication-date').value
+            fecha: inputFecha.value
         };
 
         const url = editandoId ? `http://localhost:3000/api/anuncios/${editandoId}` : 'http://localhost:3000/api/anuncios';
         const method = editandoId ? 'PUT' : 'POST';
 
-        const res = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            const result = await res.json();
 
-        if ((await res.json()).success) {
-            alert(editandoId ? "Actualizado" : "Creado");
-            limpiarFormulario();
-            cargarAnuncios();
+            if (result.success) {
+                alert(editandoId ? "Anuncio actualizado correctamente." : "Anuncio creado exitosamente.");
+                limpiarYQuitarFormulario();
+                cargarAnuncios();
+            } else {
+                alert("Hubo un contratiempo: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error al procesar el formulario de anuncios:", error);
+            alert("No se pudo establecer conexión con el servidor.");
         }
     };
 
-    // Eliminar
-    window.eliminarAnuncio = async (id) => {
-        if (!confirm("¿Eliminar anuncio?")) return;
-        const res = await fetch(`http://localhost:3000/api/anuncios/${id}`, { method: 'DELETE' });
-        if ((await res.json()).success) cargarAnuncios();
+    const eliminarAnuncio = async (id) => {
+        if (!confirm("¿Estás completamente seguro de eliminar este anuncio?")) return;
+        try {
+            const res = await fetch(`http://localhost:3000/api/anuncios/${id}`, { method: 'DELETE' });
+            const result = await res.json();
+            if (result.success) {
+                if (editandoId === id) limpiarYQuitarFormulario();
+                cargarAnuncios();
+            }
+        } catch (error) {
+            console.error("Error al intentar eliminar el anuncio:", error);
+        }
     };
 
     cargarAnuncios();
-
 });
