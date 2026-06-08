@@ -27,12 +27,6 @@
                     <button class="actions__button actions__button--create">
                         <i class="fa-solid fa-plus"></i> Crear anuncio
                     </button>
-                    <button class="actions__button actions__button--services">
-                        <i class="fa-solid fa-gear"></i> Servicios activos
-                    </button>
-                    <button class="actions__button actions__button--charges">
-                        <i class="fa-solid fa-check"></i> Cargos activos
-                    </button>
                 </div>
             </article>
             <!-- Gestión operativa: alta/edición -->
@@ -92,6 +86,25 @@
     </main>
     <!-- Footer  -->
     <footer class="footer" id="footer"></footer>
+    <template id="plantilla-anuncio">
+        <div class="anuncio-item">
+            <div class="anuncio-item__content">
+                <h4 class="anuncio-item__title"></h4>
+                <p class="anuncio-item__description"></p>
+                <small class="anuncio-item__date">
+                    <i class="far fa-calendar"></i> <span class="anuncio-item__date-text"></span>
+                </small>
+            </div>
+            <div class="anuncio-item__actions">
+                <button class="anuncio-item__btn-edit" title="Editar Anuncio">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="anuncio-item__btn-delete" title="Eliminar Anuncio">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </template>
 </div>
 <!-- Capa compartida de conexión/API + scripts base y del módulo -->
 <script src="../Javascripts/anuncios.js"></script>
