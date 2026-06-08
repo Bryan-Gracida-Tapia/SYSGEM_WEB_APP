@@ -61,6 +61,7 @@ const ENDPOINTS = {
  * Maneja los datos en memoria del frontend.
  */
 const state = {
+    cargosDisponibles: [],
     comuneros: [],
     filtered: [],
     cargoFieldCount: 0,
@@ -71,12 +72,30 @@ const state = {
  * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
  * Se ejecuta al cargar el DOM.
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     bindUI();
+    try {
+        await cargarCargosDesdeBD(); // 🔥 ESPERAR datos
+    } catch (err) {
+        console.error(err);
+        setStatusMessage("Error cargando cargos");
+    }
+    const cargoContainer = document.getElementById("cargo-fields");
+    const btnAddCargo = document.getElementById("btn-add-cargo");
+
     loadComuneros().catch((error) => {
         console.error(error);
         setStatusMessage("Error al cargar comuneros");
     });
+    btnAddCargo.addEventListener("click", () => {
+        handleAddCargo(cargoContainer, getNextCargoIndex);
+    });
+
+    window.removeCargo = function (id) {
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
+    }
+
 });
 
 /**
@@ -105,6 +124,75 @@ function bindUI() {
 
     document.getElementById("comuneros-list")
         ?.addEventListener("click", handleListAction);
+}
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR DATOS
+ */
+let cargoIndex = 0;
+
+function getNextCargoIndex() {
+    cargoIndex++;
+    return cargoIndex;
+}
+async function cargarCargosDesdeBD() {
+    try {
+        const res = await SYSGEM_DB.apiFetch("/asignaciones_cargo/cargos");
+        const data = await res.json();
+
+        if (!data.success) {
+            throw new Error("No se pudieron cargar los cargos");
+        }
+
+        console.log("Cargos:", data.data);
+
+        state.cargosDisponibles = data.data;
+
+    } catch (error) {
+        console.error("Error cargar cargos:", error);
+    }
+}
+function handleAddCargo(cargoContainer, getNextIndex) {
+    const index = getNextIndex();
+
+    const html = `
+        <div class="form__group form__cargo-item" data-id="${index}">
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                
+                <select class="card__container-select cargo-select">
+                    <option value="">-- Seleccionar cargo</option>
+                </select>
+
+                <input type="number" class="form__input cargo-year" placeholder="Año" required>
+
+                <button type="button" onclick="removeCargo(${index})">✕</button>
+            </div>
+        </div>
+    `;
+
+    cargoContainer.insertAdjacentHTML("beforeend", html);
+
+    const nuevoItem = cargoContainer.querySelector(`[data-id="${index}"]`);
+    const select = nuevoItem.querySelector(".cargo-select");
+
+    llenarSelectCargos(select, state.cargosDisponibles);
+}
+
+function llenarSelectCargos(select, cargos) {
+    if (!select || !cargos) return;
+
+    select.innerHTML = `<option value="">-- Seleccionar cargo</option>`;
+
+    cargos.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c.id;
+        option.textContent = c.nombre;
+        select.appendChild(option);
+    });
+}
+
+function removeCargo(index) {
+    const item = document.querySelector(`[data-id="${index}"]`);
+    if (item) item.remove();
 }
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// MOSTRAR / OCULTAR FORM
@@ -471,7 +559,9 @@ function buildComuneroPayload() {
         tipo: document.querySelector('input[name="type"]:checked')?.value,
         direccion: document.getElementById("address")?.value.trim(),
         correo: document.getElementById("email")?.value.trim(),
-        password: document.getElementById("password")?.value.trim()
+        password: document.getElementById("password")?.value.trim(),
+
+        cargos: obtenerCargosFormulario()
     };
 
     return payload;
@@ -492,7 +582,30 @@ async function createComunero(payload) {
         throw new Error(data.error || "Error creando comunero");
     }
 }
+function obtenerCargosFormulario() {
+    const cargos = [];
 
+    const items = document.querySelectorAll(".form__cargo-item");
+
+    items.forEach(item => {
+        const select = item.querySelector(".cargo-select");
+        const yearInput = item.querySelector(".cargo-year");
+
+        const cargoId = select.value;
+        const anio = yearInput.value;
+
+        if (cargoId && anio) {
+            cargos.push({
+                cargoId: parseInt(cargoId),
+                anio: parseInt(anio)
+            });
+        }
+    });
+
+    console.log("CARGOS A ENVIAR:", cargos);
+
+    return cargos;
+}
 /**
  * Actualizar comunero
  */

@@ -55,8 +55,8 @@ const ENDPOINTS = {
         "/asignaciones_cargo/cargos"
     ],
 
-    elegiblesCandidates: () => [
-        `/asignaciones_cargo/elegibles`
+    elegiblesCandidates: (cargoId) => [
+        `/asignaciones_cargo/elegibles/${cargoId}`
     ],
 
     asignarCargoCandidates: [
@@ -78,14 +78,18 @@ const state = {
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// INIT
  */
-document.addEventListener("DOMContentLoaded", () => {
-    attachAssignHandler();
-    attachRuletaEvents();
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        attachAssignHandler();
+        attachRuletaEvents();
 
-    cargarCargosDesdeBD().catch((err) => {
+        await cargarCargosDesdeBD();
+        await cargarComunerosActivos();
+
+    } catch (err) {
         console.error(err);
-        setStatusMessage("Error cargando cargos");
-    });
+        setStatusMessage("Error inicializando la app");
+    }
 });
 
 /**
@@ -139,7 +143,62 @@ function normalizeCargos(payload) {
         activo: c.activo
     }));
 }
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Cargar activos
+ */
+async function cargarComunerosActivos() {
+    const container = document.getElementById("active-roles-list");
 
+    if (!container) return;
+
+    try {
+        const res = await dbApiFetch("/asignaciones_cargo/activos");
+
+        if (!res.success || !res.data?.length) {
+            container.innerHTML = `
+                <div class="person-card">
+                    <div class="person-card__info">
+                        <div class="person-card__role">
+                            No hay comuneros con cargos activos
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = res.data.map(c => `
+            <div class="person-card">
+                <div class="person-card__info">
+                    <div class="person-card__name">${c.nombre_completo}</div>
+                    <div class="person-card__role">Cargo: ${c.cargo}</div>
+                    <div class="person-card__meta">
+                        Inicio: ${formatearFecha(c.fecha_inicio)}
+                    </div>
+                </div>
+            </div>
+        `).join("");
+
+    } catch (error) {
+        console.error("Error cargando activos:", error);
+
+        container.innerHTML = `
+            <div class="person-card">
+                <div class="person-card__info">
+                    <div class="person-card__role">
+                        Error cargando comuneros activos
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function formatearFecha(fecha) {
+    if (!fecha) return "Sin fecha";
+    const f = new Date(fecha);
+    return f.toLocaleDateString("es-MX");
+}
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// RULETA
  */
@@ -158,7 +217,7 @@ function attachRuletaEvents() {
 
         sugerirFechas(cargo);
 
-        await cargarElegibles();
+        await cargarElegibles(cargoId);
     });
 
     btn?.addEventListener("click", girarRuleta);
@@ -199,7 +258,7 @@ function sugerirFechas(cargo) {
 async function cargarElegibles(cargoId) {
 
     setStatusMessage("Buscando elegibles...");
-
+    console.log("cargoId:", cargoId);
     let lastError;
 
     for (const endpoint of ENDPOINTS.elegiblesCandidates(cargoId)) {
