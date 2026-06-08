@@ -63,8 +63,10 @@ exports.createComunero = async (req, res) => {
             tipo,
             direccion,
             correo,
-            password
+            password,
+            cargos
         } = req.body;
+        console.log("CARGOS BACKEND:", cargos);
 
         tipo = tipo?.replace("type_", "");
 
@@ -97,14 +99,35 @@ exports.createComunero = async (req, res) => {
              VALUES (?, ?, 'comunero', ?)`,
             [username, hashedPassword, comuneroId]
         );
+        // 3. Insertando cargos
+        if (cargos && Array.isArray(cargos) && cargos.length > 0) {
+            console.log("Insertando cargos:", cargos);
 
-        //
+            for (const c of cargos) {
+
+                const cargoId = Number(c.cargoId);
+                const anio = Number(c.anio);
+
+                console.log("Insertando:", { comuneroId, cargoId, anio });
+
+                if (!cargoId || !anio) {
+                    throw new Error(`Datos inválidos en cargos: ${JSON.stringify(c)}`);
+                }
+
+                await connection.query(
+                    `INSERT INTO comunero_cargos_cumplidos
+                         (comunero_id,  year, cargo_id
+                     VALUES (?, ?, ?)`,
+                    [comuneroId, anio, cargoId]
+                );
+            }
+        }
+
         await connection.commit();
 
         res.json({
             message: "Comunero y usuario creados correctamente"
         });
-
     } catch (error) {
         if (connection) await connection.rollback();
 

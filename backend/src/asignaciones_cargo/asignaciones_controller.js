@@ -5,7 +5,27 @@ const db = require("../config/db");
  * 📌 Controller: anuncios
  * ============================================================
  */
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener comueros activos
+ */
+exports.getActivos = async (req, res) => {
+    try {
 
+        const [rows] = await db.query(`SELECT c.id, c.nombre_completo,ca.nombre AS cargo,ac.fecha_inicio,ac.fecha_fin FROM asignaciones_cargo ac JOIN comuneros c ON c.id = ac.comunero_id JOIN cargos ca ON ca.id = ac.cargo_id WHERE ac.activo = 1 ORDER BY ac.fecha_inicio DESC`);
+
+        res.json({
+            success: true,
+            data: rows
+        });
+
+    } catch (error) {
+        console.error("🔥 ERROR REAL:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error obteniendo comuneros activos"
+        });
+    }
+};
 /**
  * ////////////////////////////////////////////////////////////////////////////////////////////////// Obtener candidatos
  */
@@ -13,7 +33,8 @@ exports.getElegibles = async (req, res) => {
     try {
         const { cargoId } = req.params;
 
-        const [rows] = await db.query("SELECT c.id, c.nombre_completo,c.fecha_inicio FROM comuneros c WHERE c.estado = 'activo' AND NOT EXISTS (SELECT 1 FROM asignaciones_cargo ac WHERE ac.comunero_id = c.id AND ac.activo = 1) ORDER BY c.fecha_inicio ASC");
+        const [rows] = await db.query(
+            "SELECT c.id, c.nombre_completo,c.fecha_inicio FROM comuneros c WHERE c.estado = 'activo' AND NOT EXISTS (SELECT 1 FROM asignaciones_cargo ac WHERE ac.comunero_id = c.id AND ac.activo = 1) AND NOT EXISTS (SELECT 1 FROM comunero_cargos_cumplidos cc WHERE cc.comunero_id = c.id AND cc.cargo_id = ?) ORDER BY c.fecha_inicio ASC", [cargoId]);
 
         res.json({ success: true, data: rows });
 
