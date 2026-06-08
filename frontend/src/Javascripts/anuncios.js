@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "[Describe detalladamente tu problema aquí]\n\n" +
                 "Saludos cordiales."
             );
-            
+
             const urlGmailWeb = `https://mail.google.com/mail/?view=cm&fs=1&to=${correoSoporte}&su=${asunto}&body=${cuerpo}`;
 
             window.open(urlGmailWeb, '_blank');
