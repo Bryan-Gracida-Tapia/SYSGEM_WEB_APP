@@ -14,28 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputFecha = document.getElementById('publication-date');
     const contenedorFecha = inputFecha ? inputFecha.closest('.form__group') : null;
     const plantilla = document.getElementById('plantilla-anuncio');
-    const btnSoporte = document.querySelector('.summary-card__btn');
     let editandoId = null;
 
     if (contenedorEditor) contenedorEditor.classList.add('card-editor-hidden');
     if (contenedorFecha) contenedorFecha.classList.add('card-editor-hidden');
-
-    if (btnSoporte) {
-        btnSoporte.addEventListener('click', () => {
-            const correoSoporte = "li01232317@unsij.edu.mx";
-            const asunto = encodeURIComponent("Soporte Técnico - Sistema de Gestión Municipal");
-            const cuerpo = encodeURIComponent(
-                "Hola, Equipo de Soporte Técnico:\n\n" +
-                "Tengo un problema/duda en el módulo de anuncios del sistema.\n" +
-                "[Describe detalladamente tu problema aquí]\n\n" +
-                "Saludos cordiales."
-            );
-
-            const urlGmailWeb = `https://mail.google.com/mail/?view=cm&fs=1&to=${correoSoporte}&su=${asunto}&body=${cuerpo}`;
-
-            window.open(urlGmailWeb, '_blank');
-        });
-    }
 
     const obtenerFechaActualLocal = () => {
         const d = new Date();
