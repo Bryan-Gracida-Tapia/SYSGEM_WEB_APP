@@ -143,18 +143,23 @@ function normalizeCargos(payload) {
         activo: c.activo
     }));
 }
-/**
- * ////////////////////////////////////////////////////////////////////////////////////////////////// Cargar activos
- */
 async function cargarComunerosActivos() {
     const container = document.getElementById("active-roles-list");
-
     if (!container) return;
 
     try {
-        const res = await dbApiFetch("/asignaciones_cargo/activos");
+        // URL COMPLETA (SOLUCIÓN)
+        const res = await fetch("http://localhost:3000/api/asignaciones_cargo/activos");
 
-        if (!res.success || !res.data?.length) {
+        // 👇 DEBUG CLAVE
+        const text = await res.text();
+        console.log("Respuesta cruda:", text);
+
+        const data = JSON.parse(text);
+
+        console.log("Respuesta completa:", data);
+
+        if (!data.success || !data.data?.length) {
             container.innerHTML = `
                 <div class="person-card">
                     <div class="person-card__info">
@@ -167,7 +172,7 @@ async function cargarComunerosActivos() {
             return;
         }
 
-        container.innerHTML = res.data.map(c => `
+        container.innerHTML = data.data.map(c => `
             <div class="person-card">
                 <div class="person-card__info">
                     <div class="person-card__name">${c.nombre_completo}</div>

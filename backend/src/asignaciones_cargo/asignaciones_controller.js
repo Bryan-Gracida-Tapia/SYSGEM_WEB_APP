@@ -2,7 +2,7 @@
 const db = require("../config/db");
 /**
  * ============================================================
- * 📌 Controller: anuncios
+ * 📌 Controller: asignaciones
  * ============================================================
  */
 /**
@@ -19,7 +19,7 @@ exports.getActivos = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("🔥 ERROR REAL:", error);
+        console.error("ERROR:", error);
         res.status(500).json({
             success: false,
             message: "Error obteniendo comuneros activos"

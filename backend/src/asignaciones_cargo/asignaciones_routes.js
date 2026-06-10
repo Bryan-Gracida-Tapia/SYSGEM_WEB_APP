@@ -9,5 +9,4 @@ router.get("/cargos", ctrl.getCargos);
 router.get("/activos", ctrl.getActivos);
 // POST
 router.post("/asignar", ctrl.asignarCargo);
-
 module.exports = router;
