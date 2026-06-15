@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Configuración base de la vista y recursos -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Módulo de Gestión de anuncios</title>
+    <link rel="stylesheet" href="../styles/style.css" />
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <header class="topnav" id="topnav"></header>
+
+    <main class="dashboard">
+        <!-- Columna principal  -->
+        <section class="dashboard__section">
+            <!-- Catálogo visual de acciones disponibles -->
+            <article class="card">
+                <h2 class="card__title">Bienvenido</h2>
+                <p class="card__description">
+                    Gestiona anuncios, revisa servicios y administra cargos de manera sencilla desde este panel.
+                </p>
+                <div class="action__news">
+                    <button class="actions__button actions__button--create">
+                        <i class="fa-solid fa-plus"></i> Crear anuncio
+                    </button>
+                </div>
+            </article>
+            <!-- Gestión operativa: alta/edición -->
+            <article class="card">
+                <h2 class="card__title">Panel de Edición</h2>
+                <p class="card__description--gestion">
+                    Ingresa los datos y pulsa <strong>Publicar anuncio</strong> (o Guardar Cambios si estás editando).
+                </p>
+
+                <form class="form_new" id="form-add">
+                    <div class="form__flex">
+                        <div class="form__group">
+                            <label class="form__label" for="title">Título del anuncio *</label>
+                            <input class="form__input" type="text" id="title" required placeholder="Ej. Corte de Energía" />
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="description">Descripción *</label>
+                            <input class="form__input" type="text" id="description" required placeholder="Describe los detalles..." />
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="publication-date">Fecha de publicación *</label>
+                            <input class="form__input" type="date" id="publication-date" required />
+                        </div>
+                    </div>
+                    <div class="form__actions">
+                        <button type="button" class="form__button" id="btn-cancel-add">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="form__button form__button--primary">
+                            Publicar anuncio
+                        </button>
+                    </div>
+                </form>
+            </article>
+            <!-- Listado de anuncios publicados -->
+            <article class="card" >
+                <h2 class="card__title">Anuncios Publicados</h2>
+                <p class="card__description">Lista completa de anuncios en la base de datos.</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+                <div id="lista-anuncios-db">
+                    <p style="color: gray; text-align: center; padding: 20px;">Cargando anuncios...</p>
+                </div>
+            </article>
+        </section>
+        <!-- Barra lateral: cargos activos  -->
+        <aside class="dashboard__aside" >
+            <div class="card">
+                <!-- Acción de soporte para atención del usuario -->
+                <div class="summary-card summary-card--addition">
+                    <h4 class="summary-card__title">Soporte</h4>
+                    <p class="summary-card__description">¿Necesitas ayuda con el sistema?</p>
+                    <button class="summary-card__btn" type="button">Contactar al soporte</button>
+                </div>
+            </div>
+        </aside>
+    </main>
+    <!-- Footer  -->
+    <footer class="footer" id="footer"></footer>
+    <template id="plantilla-anuncio">
+        <div class="anuncio-item">
+            <div class="anuncio-item__content">
+                <h4 class="anuncio-item__title"></h4>
+                <p class="anuncio-item__description"></p>
+                <small class="anuncio-item__date">
+                    <i class="far fa-calendar"></i> <span class="anuncio-item__date-text"></span>
+                </small>
+            </div>
+            <div class="anuncio-item__actions">
+                <button class="anuncio-item__btn-edit" title="Editar Anuncio">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="anuncio-item__btn-delete" title="Eliminar Anuncio">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+</div>
+<!-- Capa compartida de conexión/API + scripts base y del módulo -->
+<script src="../Javascripts/anuncios.js"></script>
+<script src="../Javascripts/global.js"></script>
+<!-- Carga dinámica de header -->
+<script>
+
+    fetch('../components/header_panel_de_anuncios.html')
+        .then((res) => res.text())
+        .then((html) => {
+            document.getElementById('topnav').innerHTML = html;
+            initLogout();
+            renderUser();
+        });
+
+</script>
+</body>
+</html>

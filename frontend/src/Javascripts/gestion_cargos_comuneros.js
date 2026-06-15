@@ -1,25 +1,15 @@
-/**
- * Módulo de gestión de comuneros.
- * Depende de DB.js para centralizar conexión y autenticación HTTP.
- */
 "use strict";
 /**
- * Este bloque define cómo se realizan las peticiones HTTP.
- * Usa:
- * - window.SYSGEM_DB.apiFetch
- * - fetch nativo como fallback
- *
- * Incluye:
- * ✔ Timeout automático
- * ✔ Serialización JSON
- * ✔ Headers estándar
+ * ============================================================
+ * 📌 MÓDULO: Gestión de comuneros
+ * ============================================================
  */
 const db = window.SYSGEM_DB;
 
 /**
  * Función base para llamadas HTTP al backend.
  *
- * @param {string} endpoint - Ruta del endpoint (ej: /comuneros)
+ * @param {string} endpoint - Ruta del endpoint
  * @param {Object} options - Configuración fetch (method, body, headers)
  * @returns {Promise<Response>}
  */
@@ -55,9 +45,7 @@ const dbApiFetch = (db && db.apiFetch)
     };
 
 /**
- * ============================================================
- * 📌 ENDPOINTS
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ENDPOINTS
  * Define rutas posibles para compatibilidad con backend.
  */
 const ENDPOINTS = {
@@ -69,12 +57,11 @@ const ENDPOINTS = {
 };
 
 /**
- * ============================================================
- * 📌 ESTADO GLOBAL
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADO GLOBAL
  * Maneja los datos en memoria del frontend.
  */
 const state = {
+    cargosDisponibles: [],
     comuneros: [],
     filtered: [],
     cargoFieldCount: 0,
@@ -82,23 +69,37 @@ const state = {
 };
 
 /**
- * ============================================================
- * 📌 INICIALIZACIÓN
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INICIALIZACIÓN
  * Se ejecuta al cargar el DOM.
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     bindUI();
+    try {
+        await cargarCargosDesdeBD(); // 🔥 ESPERAR datos
+    } catch (err) {
+        console.error(err);
+        setStatusMessage("Error cargando cargos");
+    }
+    const cargoContainer = document.getElementById("cargo-fields");
+    const btnAddCargo = document.getElementById("btn-add-cargo");
+
     loadComuneros().catch((error) => {
         console.error(error);
-        setStatusMessage("❌ Error al cargar comuneros");
+        setStatusMessage("Error al cargar comuneros");
     });
+    btnAddCargo.addEventListener("click", () => {
+        handleAddCargo(cargoContainer, getNextCargoIndex);
+    });
+
+    window.removeCargo = function (id) {
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
+    }
+
 });
 
 /**
- * ============================================================
- * 📌 EVENTOS UI
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// EVENTOS UI
  * Asocia elementos HTML con eventos JS.
  */
 function bindUI() {
@@ -112,12 +113,22 @@ function bindUI() {
             toggleAddSection(true);
         });
 
+    document.getElementById("btn-open-edit")
+        ?.addEventListener("click", () => {
+            startCreateMode();
+            toggleEditSection(true);
+        });
     document.getElementById("btn-cancel-add")
         ?.addEventListener("click", () => {
             resetFormState();
             toggleAddSection(false);
         });
 
+    document.getElementById("btn-cancel-edit")
+        ?.addEventListener("click", () => {
+            resetFormState();
+            toggleEditSection(false);
+        });
     document.getElementById("form-add")
         ?.addEventListener("submit", submitComunero);
 
@@ -125,9 +136,76 @@ function bindUI() {
         ?.addEventListener("click", handleListAction);
 }
 /**
- * ============================
- * MOSTRAR / OCULTAR FORM
- * ============================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR DATOS
+ */
+let cargoIndex = 0;
+
+function getNextCargoIndex() {
+    cargoIndex++;
+    return cargoIndex;
+}
+async function cargarCargosDesdeBD() {
+    try {
+        const res = await SYSGEM_DB.apiFetch("/asignaciones_cargo/cargos");
+        const data = await res.json();
+
+        if (!data.success) {
+            throw new Error("No se pudieron cargar los cargos");
+        }
+
+        console.log("Cargos:", data.data);
+
+        state.cargosDisponibles = data.data;
+
+    } catch (error) {
+        console.error("Error cargar cargos:", error);
+    }
+}
+function handleAddCargo(cargoContainer, getNextIndex) {
+    const index = getNextIndex();
+
+    const html = `
+        <div class="form__group form__cargo-item" data-id="${index}">
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                
+                <select class="card__container-select cargo-select">
+                    <option value="">-- Seleccionar cargo</option>
+                </select>
+
+                <input type="number" class="form__input cargo-year" placeholder="Año" required>
+
+                <button type="button" onclick="removeCargo(${index})">✕</button>
+            </div>
+        </div>
+    `;
+
+    cargoContainer.insertAdjacentHTML("beforeend", html);
+
+    const nuevoItem = cargoContainer.querySelector(`[data-id="${index}"]`);
+    const select = nuevoItem.querySelector(".cargo-select");
+
+    llenarSelectCargos(select, state.cargosDisponibles);
+}
+
+function llenarSelectCargos(select, cargos) {
+    if (!select || !cargos) return;
+
+    select.innerHTML = `<option value="">-- Seleccionar cargo</option>`;
+
+    cargos.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c.id;
+        option.textContent = c.nombre;
+        select.appendChild(option);
+    });
+}
+
+function removeCargo(index) {
+    const item = document.querySelector(`[data-id="${index}"]`);
+    if (item) item.remove();
+}
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// MOSTRAR / OCULTAR FORM
  */
 function toggleAddSection(show) {
     const section = document.getElementById("add-section");
@@ -136,13 +214,15 @@ function toggleAddSection(show) {
     section.hidden = !show;
     section.style.display = show ? "block" : "none";
 }
-/**
- * ============================================================
- * 📌 CARGA DE DATOS
- * ============================================================
- */
+function toggleEditSection(show) {
+    const section = document.getElementById("edit-section");
+    if (!section) return;
 
+    section.hidden = !show;
+    section.style.display = show ? "block" : "none";
+}
 /**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGA DE DATOS
  * Carga todos los comuneros desde backend
  */
 async function loadComuneros() {
@@ -156,7 +236,7 @@ async function loadComuneros() {
     renderComunerosList(state.filtered);
     renderSummary(data.estadisticas);
 
-    setStatusMessage(`✅ ${state.comuneros.length} comuneros cargados`);
+    setStatusMessage(`${state.comuneros.length} comuneros cargados`);
 }
 
 /**
@@ -196,12 +276,7 @@ function safeJson(res) {
 }
 
 /**
- * ============================================================
- * 📌 NORMALIZACIÓN DE DATOS
- * ============================================================
- */
-
-/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// NORMALIZACIÓN DE DATOS
  * Unifica estructura de respuesta del backend
  */
 function normalizeDashboardPayload(payload) {
@@ -230,9 +305,7 @@ function normalizeComunero(item = {}) {
 }
 
 /**
- * ============================================================
- * 📌 ESTADÍSTICAS
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADÍSTICAS
  */
 function computeStats(comuneros) {
     const total = comuneros.length;
@@ -248,9 +321,9 @@ function computeStats(comuneros) {
 }
 
 
-// ===============================
-// Renderizar comuneros
-// ===============================
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// Renderizar comuneros
+ */
 function renderComunerosList(lista) {
     const container = document.getElementById("comuneros-list");
     const message = document.getElementById("comuneros-message");
@@ -347,9 +420,7 @@ function renderSummary(stats) {
 }
 
 /**
- * ============================================================
- * 📌 FILTRO
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// FILTRO
  */
 function applyFilter() {
     const q = document.getElementById("search-comuneros")?.value.toLowerCase() || "";
@@ -362,9 +433,7 @@ function applyFilter() {
 }
 
 /**
- * ============================
- * ACCIONES (CRUD)
- * ============================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ACCIONES (CRUD)
  */
 async function handleListAction(e) {
     const btn = e.target.closest("button");
@@ -409,7 +478,7 @@ async function handleListAction(e) {
             }
 
             startEditMode(c);
-            toggleAddSection(true);
+            toggleEditSection(true);
             return;
         }
 
@@ -418,7 +487,7 @@ async function handleListAction(e) {
 
     } catch (err) {
         console.error(err);
-        setStatusMessage(`❌ ${err.message}`);
+        setStatusMessage(`${err.message}`);
     }
 }
 /**
@@ -451,11 +520,7 @@ async function darDeBaja(id) {
 }
 
 /**
- * ============================================================
- * 📌 FORMULARIO
- * ============================================================
- */
-/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// FORMULARIO
  * Maneja envío de formulario
  */
 async function submitComunero(e) {
@@ -472,7 +537,8 @@ async function submitComunero(e) {
         !payload.estadoCivil ||
         !payload.tipo ||
         !payload.direccion ||
-        !payload.correo
+        !payload.correo ||
+        !payload.password
     ) {
         setStatusMessage("Todos los campos son obligatorios");
         return;
@@ -509,7 +575,10 @@ function buildComuneroPayload() {
         estadoCivil: document.querySelector('input[name="civil_status"]:checked')?.value,
         tipo: document.querySelector('input[name="type"]:checked')?.value,
         direccion: document.getElementById("address")?.value.trim(),
-        correo: document.getElementById("email")?.value.trim()
+        correo: document.getElementById("email")?.value.trim(),
+        password: document.getElementById("password")?.value.trim(),
+
+        cargos: obtenerCargosFormulario()
     };
 
     return payload;
@@ -530,7 +599,30 @@ async function createComunero(payload) {
         throw new Error(data.error || "Error creando comunero");
     }
 }
+function obtenerCargosFormulario() {
+    const cargos = [];
 
+    const items = document.querySelectorAll(".form__cargo-item");
+
+    items.forEach(item => {
+        const select = item.querySelector(".cargo-select");
+        const yearInput = item.querySelector(".cargo-year");
+
+        const cargoId = select.value;
+        const anio = yearInput.value;
+
+        if (cargoId && anio) {
+            cargos.push({
+                cargoId: parseInt(cargoId),
+                anio: parseInt(anio)
+            });
+        }
+    });
+
+    console.log("CARGOS A ENVIAR:", cargos);
+
+    return cargos;
+}
 /**
  * Actualizar comunero
  */
@@ -548,9 +640,7 @@ async function updateComunero(id, payload) {
 }
 
 /**
- * ============================================================
- * 📌 ESTADO FORMULARIO
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADO FORMULARIO
  */
 function startCreateMode() {
     state.editingId = null;
@@ -592,9 +682,7 @@ function resetFormState() {
 }
 
 /**
- * ============================================================
- * 📌 HELPERS
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// HELPERS
  */
 async function safeError(res) {
     try {

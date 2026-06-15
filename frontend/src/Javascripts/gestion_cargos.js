@@ -1,27 +1,17 @@
 "use strict";
 /**
  * ============================================================
- * 📌 MÓDULO: GESTIÓN DE CARGOS
+ * 📌 MÓDULO: Gestión de cargos
  * ============================================================
- * Similar a gestión de comuneros:
- * ✔ Manejo robusto de endpoints (fallback)
- * ✔ Normalización de datos
- * ✔ Manejo de errores seguro
- * ✔ No rompe flujo si falla backend
  */
 
 /**
- * ============================================================
- * 📌 CONFIGURACIÓN HTTP
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CONFIGURACIÓN HTTP
  */
 const db = window.SYSGEM_DB;
 
 /**
  * Función base HTTP con:
- * ✔ Timeout
- * ✔ JSON automático
- * ✔ Headers estándar
  */
 const dbApiFetch = (db && db.apiFetch)
     ? db.apiFetch.bind(db)
@@ -56,10 +46,7 @@ const dbApiFetch = (db && db.apiFetch)
     };
 
 /**
- * ============================================================
- * 📌 ENDPOINTS (CON FALLBACK)
- * ============================================================
- * 🔥 NUEVO: ahora soporta múltiples rutas como comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ENDPOINTS
  */
 const ENDPOINTS = {
     dashboardCandidates: [], // (desactivado)
@@ -68,8 +55,8 @@ const ENDPOINTS = {
         "/asignaciones_cargo/cargos"
     ],
 
-    elegiblesCandidates: () => [
-        `/asignaciones_cargo/elegibles`
+    elegiblesCandidates: (cargoId) => [
+        `/asignaciones_cargo/elegibles/${cargoId}`
     ],
 
     asignarCargoCandidates: [
@@ -78,9 +65,7 @@ const ENDPOINTS = {
 };
 
 /**
- * ============================================================
- * 📌 ESTADO GLOBAL
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADO GLOBAL
  */
 const state = {
     comuneroObjetivo: null,
@@ -91,25 +76,24 @@ const state = {
 };
 
 /**
- * ============================================================
- * 📌 INIT
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// INIT
  */
-document.addEventListener("DOMContentLoaded", () => {
-    attachAssignHandler();
-    attachRuletaEvents();
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        attachAssignHandler();
+        attachRuletaEvents();
 
-    cargarCargosDesdeBD().catch((err) => {
+        await cargarCargosDesdeBD();
+        await cargarComunerosActivos();
+
+    } catch (err) {
         console.error(err);
-        setStatusMessage("❌ Error cargando cargos");
-    });
+        setStatusMessage("Error inicializando la app");
+    }
 });
 
 /**
- * ============================================================
- * 📌 CARGAR CARGOS (CON FALLBACK)
- * ============================================================
- * 🔥 NUEVO: estilo comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR DATOS
  */
 async function cargarCargosDesdeBD() {
     try {
@@ -144,10 +128,7 @@ function llenarSelectCargos(cargos) {
     state.cargosDisponibles = cargos;
 }
 /**
- * ============================================================
- * 📌 NORMALIZACIÓN DE CARGOS
- * ============================================================
- * 🔥 NUEVO: igual que comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// NORMALIZACIÓN DE CARGOS
  */
 function normalizeCargos(payload) {
 
@@ -162,11 +143,68 @@ function normalizeCargos(payload) {
         activo: c.activo
     }));
 }
+async function cargarComunerosActivos() {
+    const container = document.getElementById("active-roles-list");
+    if (!container) return;
 
+    try {
+        const res = await fetch("http://localhost:3000/api/asignaciones_cargo/activos");
+
+        const text = await res.text();
+        console.log("Respuesta cruda:", text);
+
+        const data = JSON.parse(text);
+
+        console.log("Respuesta completa:", data);
+
+        if (!data.success || !data.data?.length) {
+            container.innerHTML = `
+                <div class="person-card">
+                    <div class="person-card__info">
+                        <div class="person-card__role">
+                            No hay comuneros con cargos activos
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = data.data.map(c => `
+            <div class="person-card">
+                <div class="person-card__info">
+                    <div class="person-card__name">${c.nombre_completo}</div>
+                    <div class="person-card__role">Cargo: ${c.cargo}</div>
+                    <div class="person-card__meta">
+                        Inicio: ${formatearFecha(c.fecha_inicio)}
+                        Fin: ${formatearFecha(c.fecha_fin)}
+                    </div>
+                </div>
+            </div>
+        `).join("");
+
+    } catch (error) {
+        console.error("Error cargando activos:", error);
+
+        container.innerHTML = `
+            <div class="person-card">
+                <div class="person-card__info">
+                    <div class="person-card__role">
+                        Error cargando comuneros activos
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function formatearFecha(fecha) {
+    if (!fecha) return "Sin fecha";
+    const f = new Date(fecha);
+    return f.toLocaleDateString("es-MX");
+}
 /**
- * ============================================================
- * 📌 RULETA
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// RULETA
  */
 function attachRuletaEvents() {
 
@@ -183,16 +221,14 @@ function attachRuletaEvents() {
 
         sugerirFechas(cargo);
 
-        await cargarElegibles();
+        await cargarElegibles(cargoId);
     });
 
     btn?.addEventListener("click", girarRuleta);
 }
 
 /**
- * ============================================================
- * 📌 SUGERIR FECHAS (YA EXISTENTE)
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// SUGERIR FECHAS
  */
 function sugerirFechas(cargo) {
 
@@ -221,15 +257,12 @@ function sugerirFechas(cargo) {
 }
 
 /**
- * ============================================================
- * 📌 CARGAR ELEGIBLES (CON FALLBACK)
- * ============================================================
- * 🔥 NUEVO estilo comuneros
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR ELEGIBLES
  */
 async function cargarElegibles(cargoId) {
 
     setStatusMessage("Buscando elegibles...");
-
+    console.log("cargoId:", cargoId);
     let lastError;
 
     for (const endpoint of ENDPOINTS.elegiblesCandidates(cargoId)) {
@@ -245,7 +278,7 @@ async function cargarElegibles(cargoId) {
 
             renderRuleta();
 
-            setStatusMessage(`✅ ${state.elegibles.length} elegibles encontrados`);
+            setStatusMessage(`${state.elegibles.length} elegibles encontrados`);
             return;
 
         } catch (err) {
@@ -254,13 +287,11 @@ async function cargarElegibles(cargoId) {
     }
 
     console.error(lastError);
-    setStatusMessage("❌ Error cargando elegibles");
+    setStatusMessage("Error cargando elegibles");
 }
 
 /**
- * ============================================================
- * 📌 RENDER RULETA
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// RENDER RULETA
  */
 function renderRuleta() {
 
@@ -279,9 +310,7 @@ function renderRuleta() {
 }
 
 /**
- * ============================================================
- * 📌 GIRAR RULETA
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// GIRAR RULETA
  */
 function girarRuleta() {
 
@@ -300,9 +329,7 @@ function girarRuleta() {
 }
 
 /**
- * ============================================================
- * 📌 ASIGNAR CARGO
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ASIGNAR CARGO
  */
 function attachAssignHandler() {
 
@@ -353,15 +380,13 @@ function attachAssignHandler() {
 
         } catch (err) {
             console.error(err);
-            setStatusMessage("❌ Error al asignar");
+            setStatusMessage("Error al asignar");
         }
     });
 }
 
 /**
- * ============================================================
- * 📌 API ASIGNAR (CON FALLBACK)
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// API ASIGNAR
  */
 async function assignCargo(body) {
 
@@ -386,11 +411,23 @@ async function assignCargo(body) {
 
     throw lastError;
 }
-
 /**
- * ============================================================
- * 📌 HELPERS (REUTILIZADOS)
- * ============================================================
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// ESTADÍSTICAS
+ */
+function computeStats(comuneros) {
+    const total = comuneros.length;
+    const activos = comuneros.filter(c => c.estado === "activo").length;
+    const baja = comuneros.filter(c => c.estado === "baja").length;
+
+    return {
+        total,
+        activos,
+        inactivos: total - activos - baja,
+        baja
+    };
+}
+/**
+ * ////////////////////////////////////////////////////////////////////////////////////////////////// HELPERS
  */
 function setStatusMessage(msg) {
     const el = document.getElementById("roulette-message");

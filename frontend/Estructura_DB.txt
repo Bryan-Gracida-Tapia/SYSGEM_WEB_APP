@@ -1,0 +1,127 @@
+ESTRUCTURA RECOMENDADA DE BASE DE DATOS (SYSGEM)
+
+Objetivo:
+Definir una estructura mínima y consistente para que las interfaces actuales
+(login, gestión de comuneros y gestión/asignación de cargos) funcionen correctamente.
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS sysgem;
+USE sysgem;
+
+-- =========================================
+-- Tabla: comuneros
+-- =========================================
+CREATE TABLE comuneros (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(255) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    estado_civil ENUM('soltero','casado','union_libre'),
+    tipo ENUM('originario','residente'),
+    direccion VARCHAR(255),
+    correo VARCHAR(255) NOT NULL UNIQUE,
+    foto_perfil LONGBLOB,
+    estado ENUM('activo','inactivo','baja') DEFAULT 'inactivo',
+    fecha_inicio DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_nombre (nombre_completo),
+    INDEX idx_estado (estado)
+);
+
+-- =========================================
+-- Tabla: usuarios
+-- =========================================
+CREATE TABLE usuarios (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('admin','secretaria','comunero') NOT NULL,
+    comunero_id BIGINT,
+    activo TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_usuario_comunero
+        FOREIGN KEY (comunero_id) REFERENCES comuneros(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+-- =========================================
+-- Tabla: cargos
+-- =========================================
+CREATE TABLE cargos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL UNIQUE,
+    descripcion TEXT,
+    activo TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    cantidad INT,
+    nivel INT,
+    duracion VARCHAR(50),
+    edad VARCHAR(50),
+    mes VARCHAR(50)
+);
+
+-- =========================================
+-- Tabla: asignaciones_cargo
+-- =========================================
+CREATE TABLE asignaciones_cargo (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    comunero_id BIGINT NOT NULL,
+    cargo_id BIGINT NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE,
+    activo TINYINT(1) DEFAULT 1,
+    creado_por_usuario_id BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_fecha_inicio (fecha_inicio),
+
+    CONSTRAINT fk_asignacion_comunero
+        FOREIGN KEY (comunero_id) REFERENCES comuneros(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_asignacion_cargo
+        FOREIGN KEY (cargo_id) REFERENCES cargos(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_asignacion_usuario
+        FOREIGN KEY (creado_por_usuario_id) REFERENCES usuarios(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+-- =========================================
+-- Tabla: comunero_cargos_cumplidos
+-- =========================================
+CREATE TABLE comunero_cargos_cumplidos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    comunero_id BIGINT NOT NULL,
+    cargo_id BIGINT NOT NULL,
+    year INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_cumplido_comunero
+        FOREIGN KEY (comunero_id) REFERENCES comuneros(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_cumplido_cargo
+        FOREIGN KEY (cargo_id) REFERENCES cargos(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+-- =========================================
+-- Tabla: anuncios
+-- =========================================
+CREATE TABLE anuncios (
+    id_anuncio INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(400) NOT NULL,
+    fecha DATE NOT NULL
+);

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Configuración base de la vista y recursos -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SYSGEM - Mi Perfil</title>
+    <link rel="stylesheet" href="../styles/style.css" />
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <header class="topnav" id="topnav"></header>
+    <!-- Columna principal  -->
+    <main class="dashboard__section--profile">
+
+        <section class="shortcuts">
+            <div class="card shortcut">
+                <div class="shortcut__icon"><i class="far fa-user"></i></div>
+                <span>Perfil</span>
+                <small class="card__subtitle">Ver y editar</small>
+            </div>
+            <div class="card shortcut">
+                <div class="shortcut__icon"><i class="fas fa-briefcase"></i></div>
+                <span>Historial</span>
+                <small class="card__subtitle">Mis cargos</small>
+            </div>
+        </section>
+
+        <section class="profile">
+            <div class="profile__letf">
+                <div class="profile__icon">
+                    <i class="far fa-user"></i>
+                </div>
+                <div class="profile__info">
+                    <span class="profile__name" id="perf-usuario">Cargando...</span>
+                    <span class="profile__status" id="perf-status">Cargando cargo..</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="information">
+            <div class="information__box">
+                <h3 class="card__title">Información Personal</h3>
+                <p class="card__description">Datos de registro</p>
+            </div>
+
+            <div class="card__stats card__stats--grid">
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-nombre">-</span>
+                    <span class="card__label">Nombre completo</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-fecha">-</span>
+                    <span class="card__label">Fecha de nacimiento</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-correo">-</span>
+                    <span class="card__label">Correo electrónico</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="info-cargo">Sin asignar</span>
+                    <span class="card__label">Cargo actual</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="information">
+            <div class="information__box">
+                <h3 class="card__title">Cargos Comunitarios</h3>
+                <p class="card__description">Resumen de cumplimiento</p>
+            </div>
+
+            <div class="card__stats card__stats--grid">
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="stats-cumplidos">0</span>
+                    <span class="card__label">Cumplidos</span>
+                </div>
+                <div class="card__stats-container card__stats--profile">
+                    <span class="card__value" id="stats-faltantes">0</span>
+                    <span class="card__label">Faltantes</span>
+                </div>
+            </div>
+        </section>
+        <section class="information profile-form-section" id="form-edicion-perfil">
+            <div class="information__box">
+                <h3 class="card__title">Modificar Información Personal</h3>
+                <p class="card__description">Actualiza tu correo o foto de perfil</p>
+            </div>
+            <div class="profile-form-container">
+                <div class="profile-form-group">
+                    <label class="profile-form-label">Correo Electrónico *</label>
+                    <input type="email" id="edit-correo" class="profile-form-input" />
+                </div>
+                <div class="profile-form-group">
+                    <label class="profile-form-label">Nueva Foto de Perfil</label>
+                    <input type="file" id="edit-foto" accept="image/*" class="profile-form-file" />
+                </div>
+                <div class="profile-form-actions">
+                    <button id="btn-guardar-perfil" class="profile-btn profile-btn--save">Guardar Cambios</button>
+                    <button id="btn-cancelar-perfil" class="profile-btn profile-btn--cancel">Cancelar</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer  -->
+    <footer class="footer" id="footer"></footer>
+</div>
+<!-- Capa compartida de conexión/API + scripts base y del módulo -->
+<script src="../Javascripts/DB.js"></script>
+<script src="../Javascripts/perfil.js"></script>
+<script src="../Javascripts/global.js"></script>
+<!-- Carga dinámica de header -->
+<script>
+    fetch('../components/header_profile.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('topnav').innerHTML = html;
+        });
+
+</script>
+</body>
+</html>
