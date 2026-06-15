@@ -148,10 +148,8 @@ async function cargarComunerosActivos() {
     if (!container) return;
 
     try {
-        // URL COMPLETA (SOLUCIÓN)
         const res = await fetch("http://localhost:3000/api/asignaciones_cargo/activos");
 
-        // 👇 DEBUG CLAVE
         const text = await res.text();
         console.log("Respuesta cruda:", text);
 
@@ -179,6 +177,7 @@ async function cargarComunerosActivos() {
                     <div class="person-card__role">Cargo: ${c.cargo}</div>
                     <div class="person-card__meta">
                         Inicio: ${formatearFecha(c.fecha_inicio)}
+                        Fin: ${formatearFecha(c.fecha_fin)}
                     </div>
                 </div>
             </div>
