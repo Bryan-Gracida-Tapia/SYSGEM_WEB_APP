@@ -112,21 +112,11 @@ function bindUI() {
             startCreateMode();
             toggleAddSection(true);
         });
-    document.getElementById("btn-open-edit")
-        ?.addEventListener("click", () => {
-            startCreateMode();
-            toggleEditSection(true);
-        });
 
     document.getElementById("btn-cancel-add")
         ?.addEventListener("click", () => {
             resetFormState();
             toggleAddSection(false);
-        });
-    document.getElementById("btn-cancel-edit")
-        ?.addEventListener("click", () => {
-            resetFormState();
-            toggleEditSection(false);
         });
 
     document.getElementById("form-add")
@@ -209,16 +199,6 @@ function removeCargo(index) {
  */
 function toggleAddSection(show) {
     const section = document.getElementById("add-section");
-    if (!section) return;
-
-    section.hidden = !show;
-    section.style.display = show ? "block" : "none";
-}
-/**
- * ////////////////////////////////////////////////////////////////////////////////////////////////// MOSTRAR / OCULTAR FORM
- */
-function toggleEditSection(show) {
-    const section = document.getElementById("edit-section");
     if (!section) return;
 
     section.hidden = !show;
@@ -391,7 +371,6 @@ function renderComunerosList(lista) {
                 ` : ""}
             
                 <button class="card__btn card__btn--edit"
-                    id="btn-open-edit"
                     data-action="edit"
                     data-id="${c.id}"
                     ${c.estado === "inactivo" ? "disabled title='No se puede editar (inactivo)'" : ""}>
@@ -482,7 +461,7 @@ async function handleListAction(e) {
             }
 
             startEditMode(c);
-            toggleEditSection(true);
+            toggleAddSection(true);
             return;
         }
 
