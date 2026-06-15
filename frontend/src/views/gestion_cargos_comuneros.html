@@ -168,11 +168,6 @@
                                 </div>
                             </div>
 
-                            <div class="form__group form__group--full">
-                                <label class="form__label" for="profile-photo">Foto de Perfil</label>
-                                <input class="form__input" type="file" id="profile-photo" accept="image/*" />
-                                <div class="form__help" id="photo-filename">Ningún archivo seleccionado</div>
-                            </div>
                         </div>
 
                         <div class="form__section">
@@ -189,6 +184,55 @@
                         <div class="form__actions">
                             <button type="button" class="form__button" id="btn-cancel-add">Cancelar</button>
                             <button type="submit" class="form__button form__button--primary" id="btn-save-comunero">Guardar Comunero</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Formulario para editar comuneros -->
+                <div class="card card--add" id="edit-section" aria-hidden="true" hidden>
+                    <h3 class="card__title">Agregar Nuevo Comunero</h3>
+                    <p class="card__description card__description--small">Rellena los datos y agrega los cargos cumplidos. Campos obligatorios marcados con *</p>
+
+                    <form class="form" id="form-edit">
+                        <div class="form__grid">
+
+                            <div class="form__group">
+                                <span class="form__label">Estado civil *</span>
+                                <div class="form__options">
+                                    <label class="form__option">
+                                        <input class="form__radio" type="radio" name="civil_status" value="soltero"  required>
+                                        <span class="form__option-label">Soltero</span>
+                                    </label>
+                                    <label class="form__option">
+                                        <input class="form__radio" type="radio" name="civil_status" value="casado" >
+                                        <span class="form__option-label">Casado</span>
+                                    </label>
+                                    <label class="form__option">
+                                        <input class="form__radio" type="radio" name="civil_status" value="union_libre" >
+                                        <span class="form__option-label">Unión libre</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form__group">
+                                <label class="form__label" for="address">Residencia actual *</label>
+                                <input class="form__input" type="text" id="address_edit" required placeholder="Dirección" />
+                            </div>
+                        </div>
+
+                        <div class="form__section">
+                            <div class="form__section-header">
+                                <h4 class="form__section-title">Cargos Cumplidos</h4>
+                                <button type="button" class="form__button form__button--add" id="btn-add-cargo-edit">
+                                    <i class="fa-solid fa-plus"></i>
+                                    Agregar Cargo
+                                </button>
+                            </div>
+                            <div id="cargo-fields-edit"></div>
+                        </div>
+
+                        <div class="form__actions">
+                            <button type="button" class="form__button" id="btn-cancel-edit">Cancelar</button>
+                            <button type="submit" class="form__button form__button--primary" id="btn-save-comunero-edit">Guardar Comunero</button>
                         </div>
                     </form>
                 </div>

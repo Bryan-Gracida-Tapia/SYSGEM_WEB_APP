@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const db = require("../config/db");
 /**
  * ============================================================
- * 📌 Controller: anuncios
+ * 📌 Controller: comuneros
  * ============================================================
  */
 /**

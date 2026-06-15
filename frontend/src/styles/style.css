@@ -81,6 +81,11 @@ main{
     color:var(--muted);
     font-size:0.95rem;
 }
+.person-card__meta{
+    color:var(--muted);
+    display:flex;
+    flex-direction: column;
+}
 /* ------------------------------
       Layout: gestión de cargos: Ruleta de asignación de cargos
       ------------------------------ */
@@ -149,6 +154,7 @@ div{
     flex-wrap: wrap;
 }
 .card__stats-container{
+    flex: 1 1 200px;
     min-width:160px;
     background:linear-gradient(180deg, rgba(14,165,233,0.06), var(--card));
     padding:12px;

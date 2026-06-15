@@ -113,12 +113,22 @@ function bindUI() {
             toggleAddSection(true);
         });
 
+    document.getElementById("btn-open-edit")
+        ?.addEventListener("click", () => {
+            startCreateMode();
+            toggleEditSection(true);
+        });
     document.getElementById("btn-cancel-add")
         ?.addEventListener("click", () => {
             resetFormState();
             toggleAddSection(false);
         });
 
+    document.getElementById("btn-cancel-edit")
+        ?.addEventListener("click", () => {
+            resetFormState();
+            toggleEditSection(false);
+        });
     document.getElementById("form-add")
         ?.addEventListener("submit", submitComunero);
 
@@ -199,6 +209,13 @@ function removeCargo(index) {
  */
 function toggleAddSection(show) {
     const section = document.getElementById("add-section");
+    if (!section) return;
+
+    section.hidden = !show;
+    section.style.display = show ? "block" : "none";
+}
+function toggleEditSection(show) {
+    const section = document.getElementById("edit-section");
     if (!section) return;
 
     section.hidden = !show;
@@ -461,7 +478,7 @@ async function handleListAction(e) {
             }
 
             startEditMode(c);
-            toggleAddSection(true);
+            toggleEditSection(true);
             return;
         }
 
