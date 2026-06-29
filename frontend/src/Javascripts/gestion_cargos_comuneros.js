@@ -473,7 +473,7 @@ async function handleListAction(e) {
                 return;
             }
             if (c.estado === "inactivo") {
-                setStatusMessage("⚠No se puede editar un comunero inactivo");
+                setStatusMessage("No se puede editar un comunero inactivo");
                 return;
             }
 
@@ -627,9 +627,15 @@ function obtenerCargosFormulario() {
  * Actualizar comunero
  */
 async function updateComunero(id, payload) {
+
+    const body = {
+        estadoCivil: payload.estadoCivil,
+        direccion: payload.direccion
+    };
+
     const res = await dbApiFetch(`/comuneros/${id}`, {
         method: "PUT",
-        body: payload
+        body
     });
 
     const data = await safeJson(res);

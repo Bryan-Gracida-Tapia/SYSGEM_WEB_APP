@@ -151,17 +151,13 @@ exports.updateComunero = async (req, res) => {
         const { id } = req.params;
 
         const {
-            nombreCompleto,
-            fechaNacimiento,
             estadoCivil,
-            tipo,
             direccion,
-            correo
         } = req.body;
 
         await db.query(
-            "UPDATE comuneros SET nombre_completo = ?, fecha_nacimiento = ?, estado_civil = ?, tipo = ?, direccion = ?, correo = ? WHERE id = ?",
-            [nombreCompleto, fechaNacimiento, estadoCivil, tipo, direccion, correo, id]
+            "UPDATE comuneros SET estado_civil = ?, direccion = ? WHERE id = ?",
+            [estadoCivil, direccion, id]
         );
 
         res.json({ success: true });

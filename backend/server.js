@@ -28,9 +28,6 @@ app.get("/", (req, res) => {
     res.send("API funcionando");
 });
 
-// ==========================
-// 404 HANDLER (🔥 IMPORTANTE)
-// ==========================
 app.use((req, res) => {
     res.status(404).json({
         success: false,
