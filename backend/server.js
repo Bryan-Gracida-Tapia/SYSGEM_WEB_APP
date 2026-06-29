@@ -21,17 +21,17 @@ app.use("/api/login", require("./src/login/login_routes"));
 app.use("/api/perfil", require("./src/perfil/perfil_routes"));
 app.use("/api/anuncios", require("./src/anuncios/anuncios_routes"));
 
+// Ruta absoluta del frontend
+const frontendPath = path.resolve(__dirname, "../frontend");
+
+console.log("Frontend:", frontendPath);
+
+// Servir TODOS los archivos del frontend
+app.use(express.static(frontendPath));
+
 // Página principal
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/index.html"));
-});
-
-// 404 para la API
-app.use("/api/", (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Ruta no encontrada"
-    });
+    res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
