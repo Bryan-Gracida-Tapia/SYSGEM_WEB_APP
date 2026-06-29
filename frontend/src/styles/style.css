@@ -165,12 +165,16 @@ div{
     gap:6px;
 }
 .card__value{
-    font-weight:800;
-    font-size:1.3rem;
+    color:var(--muted);
+    font-size:0.95rem;
 }
 .card__label{
     color:var(--muted);
     font-size:0.95rem;
+}
+.card__label--profile{
+    font-size:1.25rem;
+    font-weight:750;
 }
 
 /* ////////////////////////////////////////////////////////////////////////////////////////////////// Panel de control de cargos-comuneros
@@ -574,7 +578,7 @@ div{
 }
 .shortcut{
     display: flex;
-    flex: 0 0 32%;
+    flex: 1 1 200px;
     min-width: 30rem;
     background: var(--card);
     padding: 0.9rem;
@@ -643,10 +647,14 @@ div{
     color: var(--muted);
     font-size: 0.9rem;
 }
-.card__stats--grid{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.6rem;
+.card__stats--cargos{
+    display: flex;
+    flex: 1 1 200px;
+    padding: 0.9rem;
+    border-radius: 12px;
+    gap: 0.5rem;
+    align-items: flex-start;
+    cursor: pointer;
 }
 .information{
     display: flex;
@@ -921,7 +929,7 @@ div{
 }
 
 .profile-form-section {
-    display: none; /* 🔴 ESTA LÍNEA HACE QUE INICIE OCULTO */
+    display: none;
     margin-top: 20px;
 }
 
