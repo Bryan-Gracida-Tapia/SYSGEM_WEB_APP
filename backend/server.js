@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 // 404 para la API
-app.use("/api/*", (req, res) => {
+app.use("/api/", (req, res) => {
     res.status(404).json({
         success: false,
         message: "Ruta no encontrada"
