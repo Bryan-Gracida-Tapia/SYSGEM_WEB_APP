@@ -1,45 +1,41 @@
 "use strict";
 
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
-// ==========================
-// MIDDLEWARE
-// ==========================
 app.use(cors());
 app.use(express.json());
 
-// ==========================
-// RUTAS
-// ==========================
+// Servir frontend
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+// API
 app.use("/api/comuneros", require("./src/comuneros/comuneros_routes"));
 app.use("/api/asignaciones_cargo", require("./src/asignaciones_cargo/asignaciones_routes"));
 app.use("/api/login", require("./src/login/login_routes"));
 app.use("/api/perfil", require("./src/perfil/perfil_routes"));
 app.use("/api/anuncios", require("./src/anuncios/anuncios_routes"));
 
-// ==========================
-// TEST
-// ==========================
+// Página principal
 app.get("/", (req, res) => {
-    res.send("API funcionando");
+    res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
-app.use((req, res) => {
+// 404 para la API
+app.use("/api/*", (req, res) => {
     res.status(404).json({
         success: false,
         message: "Ruta no encontrada"
     });
 });
 
-// ==========================
-// SERVIDOR
-// ==========================
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor en http://localhost:${PORT}`);
+    console.log(`Servidor iniciado en el puerto ${PORT}`);
 });
